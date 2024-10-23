@@ -1,18 +1,43 @@
-// Import the express module
 const express = require('express');
-
-// Create an Express application
+const passport = require('passport');
+const session = require('express-session');
+const authRoutes = require('./routes/authRoutes');
+const bodyParser = require('body-parser');
+require('dotenv').config();
 const app = express();
 
-// Define a port
-const port = 3000;
+// Import Passport config
+require('./config/passport');
 
-// Define a route (GET request to the root URL)
+// Middleware for sessions
+app.use(session({
+  secret: process.env.google_client_secret,
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Initialize Passport and restore authentication state, if any, from the session
+app.use(passport.initialize());
+app.use(passport.session());
+
+// View engine setup (optional, if you're using EJS or another templating engine)
+app.set('view engine', 'ejs');
+
+// Use the auth routes
+app.use('/', authRoutes);
+
+// Home route
 app.get('/', (req, res) => {
-  res.send('Hello, world!');
+  res.send('Welcome to the home page!');
 });
 
-// Start the server and listen on the defined port
+// Login route
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Start the server
+const port = 3000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
