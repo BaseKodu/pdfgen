@@ -1,0 +1,67 @@
+ <!-- Add Template Modal -->
+ <dialog id="my_modal" class="modal">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <h3 class="font-bold text-lg mb-4">Add New Template</h3>
+        
+        <form id="newTemplateForm" class="space-y-4">
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Template Name</span>
+                </label>
+                <input name="title" type="text" placeholder="Enter template title" class="input input-bordered w-full"  required />
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Description</span>
+                </label>
+                <textarea class="textarea textarea-bordered h-24" placeholder="Enter template description" name="description" required></textarea>
+            </div>
+
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn btn-ghost">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Template</button>
+                </form>
+            </div>
+        </form>
+    </div>
+</dialog>
+<script>
+    document.getElementById('newTemplateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            title: this.querySelector('input[name="title"]').value,
+            description: this.querySelector('textarea[name="description"]').value
+        };
+    
+        // Here you would typically send this data to your server
+        fetch('/templates/add-template', {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                if (response.status === 200) {
+                    // Redirect to the edit page
+                    window.location.href = '/templates/edit';
+                } else {
+                    console.log(response);
+                    alert(response.message);
+                }
+            }
+        });
+        
+        // Close the modal
+        window.my_modal.close();
+        
+        // Clear the form
+        this.reset();
+    });
+</script>

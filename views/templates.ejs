@@ -1,3 +1,46 @@
 <%- include('layout/header') %>
-<h1>You are in the template page</h1>
+<div class="drawer lg:drawer-open">
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+    
+    <!-- Page content -->
+    <div class="drawer-content flex flex-col p-4">
+        <!-- Mobile nav toggle -->
+        <div class="lg:hidden">
+            <label for="my-drawer" class="btn btn-primary drawer-button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </label>
+        </div>
+
+        <!-- Main content -->
+        <div class="p-4">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Your Templates</h1>
+                <button class="btn btn-primary btn-circle" onclick="window.my_modal.showModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <% templates.forEach(template => { %>
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title"><%= template.name %></h2>
+                            <p><%= template.description %></p>
+                            <div class="card-actions justify-end">
+                                <button class="btn btn-primary">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('layout/navbars/sidebar1') %>
+    <%- include('components/add_template_modal') %>
+</div>
 <%- include('layout/footer') %>
