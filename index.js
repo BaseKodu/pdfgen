@@ -2,14 +2,20 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const authRoutes = require('./routes/authRoutes');
+const basicRoutes = require('./routes/basicRoutes')
 const bodyParser = require('body-parser');
 require('dotenv').config();
+
 const app = express();
 
 // Import Passport config
 require('./config/passport');
 
 // Middleware for sessions
+app.use(express.urlencoded({extended:false}))
+app.use(express.json())
+
+
 app.use(session({
   secret: process.env.google_client_secret,
   resave: false,
@@ -23,18 +29,11 @@ app.use(passport.session());
 // View engine setup (optional, if you're using EJS or another templating engine)
 app.set('view engine', 'ejs');
 
-// Use the auth routes
-app.use('/', authRoutes);
+app.use('/', basicRoutes)
 
-// Home route
-app.get('/', (req, res) => {
-  res.send('Welcome to the home page!');
-});
 
-// Login route
-app.get('/login', (req, res) => {
-  res.render('login');
-});
+app.use(express.static('public'));
+
 
 // Start the server
 const port = 3000;
