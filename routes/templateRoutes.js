@@ -25,7 +25,6 @@ router.get("/", ensureAuthenticated, async (req, res) => {
 router.post('/add-template', ensureAuthenticated, async (req, res) =>{
     try{
         const formdata = req.body;
-        console.log(formdata);
         const newTemplate = new Template({
             title:req.body.title,
             description:req.body.description,
@@ -38,7 +37,6 @@ router.post('/add-template', ensureAuthenticated, async (req, res) =>{
             type: "success"
         });
     } catch (err) {
-        console.log(err);
         res.json({
             message: err.message,
             type: "danger"
