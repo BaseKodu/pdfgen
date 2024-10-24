@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+const {ensureAuthenticated, ensureGuest} = require('../middleware/auth')
 
 router.get("/", async (req, res) => {
     try {
