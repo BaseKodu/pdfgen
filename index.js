@@ -2,7 +2,8 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const authRoutes = require('./routes/authRoutes');
-const basicRoutes = require('./routes/basicRoutes')
+const basicRoutes = require('./routes/basicRoutes');
+const templateRoutes = require('./routes/templateRoutes')
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
@@ -17,7 +18,7 @@ app.use(express.json())
 
 
 app.use(session({
-  secret: process.env.google_client_secret,
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }));
@@ -30,6 +31,8 @@ app.use(passport.session());
 app.set('view engine', 'ejs');
 
 app.use('/', basicRoutes)
+app.use('/templates', templateRoutes)
+app.use('/auth', authRoutes)
 
 
 app.use(express.static('public'));
