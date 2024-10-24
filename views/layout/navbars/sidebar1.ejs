@@ -6,7 +6,7 @@
             <h2 class="menu-title text-lg font-bold">Navigation</h2>
         </li>
         <li><a class="active">Templates</a>
-            <% if (templates.length > 0) { %>
+            <% if ((typeof templates !== 'undefined') && (templates.length > 0)  && (typeof showTemplates === 'undefined' ? false : showTemplates) ) { %>
                 <ul>
                     <li class="mt-2"><a>Add Template</a></li>
                     <div class="divider"></div>

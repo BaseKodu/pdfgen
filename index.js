@@ -42,6 +42,7 @@ app.use('/auth', authRoutes)
 
 
 app.use(express.static('public'));
+app.use('/dist', express.static('public/dist'));
 
 // Database Setup
 // database connection
