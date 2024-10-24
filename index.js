@@ -23,6 +23,12 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use((req, res, next) =>{
+  res.locals.message = req.session.message;
+  delete req.session.message;
+  next();
+})
+
 // Initialize Passport and restore authentication state, if any, from the session
 app.use(passport.initialize());
 app.use(passport.session());
@@ -36,6 +42,17 @@ app.use('/auth', authRoutes)
 
 
 app.use(express.static('public'));
+
+// Database Setup
+// database connection
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  // useUnifiedTopology: true;
+});
+const db = mongoose.connection;
+db.on('error', (error) => console.log(error))
+db.once('open', () => console.log("Connection to Database is a success"));
 
 
 // Start the server
