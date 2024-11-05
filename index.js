@@ -5,6 +5,7 @@ const authRoutes = require('./routes/authRoutes');
 const basicRoutes = require('./routes/basicRoutes');
 const templateRoutes = require('./routes/templateRoutes')
 const bodyParser = require('body-parser');
+const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
 
 const app = express();
@@ -35,6 +36,10 @@ app.use(passport.session());
 
 // View engine setup (optional, if you're using EJS or another templating engine)
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'base');
+app.set("layout extractScripts", true);
+app.set("layout extractStyles", true);
 
 app.use('/', basicRoutes)
 app.use('/templates', templateRoutes)

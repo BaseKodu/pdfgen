@@ -6,7 +6,7 @@ const {ensureAuthenticated, ensureGuest} = require('../middleware/auth')
 
 router.get("/", ensureGuest, async (req, res) => {
     try {
-        res.render('home', {
+        res.render('pages/home', {
             title: 'pdfGen',
         });
     } catch (err) {

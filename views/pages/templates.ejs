@@ -1,0 +1,31 @@
+<%- contentFor('leftSidebar') %>
+<%- include('../navbars/sidebar1') %>
+
+<%- contentFor('content') %>
+<div class="p-4">
+    <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Your Templates</h1>
+            <button class="btn btn-primary btn-circle" onclick="window.my_modal.showModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% templates.forEach(template => { %>
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title"><%= template.title %></h2>
+                        <p><%= template.description %></p>
+                        <div class="card-actions justify-end">
+                            <button class="btn btn-primary">Select</button>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+    <%- include('../components/add_template_modal') %>
+
+</div>
