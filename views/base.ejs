@@ -1,0 +1,94 @@
+<!-- views/layouts/base.ejs -->
+<!DOCTYPE html>
+<html lang="en" data-theme="sunset">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="/styles/output.css">
+    
+    <!-- CodeMirror styles -->
+    <style>
+        .CodeMirror {
+            height: 100%;
+            font-size: 14px;
+        }
+    </style>
+
+    <!-- Page-specific styles -->
+    <%- typeof styles != 'undefined' ? styles : '' %>
+    
+    <!-- Custom head content (meta tags, etc) -->
+    <%- typeof head != 'undefined' ? head : '' %>
+    
+    <title><%= typeof title != 'undefined' ? title : 'Default Title' %></title>
+</head>
+<body>
+    <div class="min-h-screen bg-base-200">
+        <!-- Add drawer wrapper -->
+        <div class="drawer">
+            <!-- Add drawer toggle checkbox -->
+            <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
+            
+            <!-- Wrap existing content in drawer-content -->
+            <div class="drawer-content">
+                <div class="flex flex-col lg:flex-row-reverse w-full"> 
+                    <!-- Top Navbar -->
+                    <% if (typeof hideNavbar !== 'undefined' && !hideNavbar) { %>
+                        <%- typeof navbar != 'undefined' ? navbar : include('../navbars/navbar1') %>
+                    <% } %>
+
+                    <div class="flex flex-col lg:flex-row-reverse w-full">
+                        <!-- Right Sidebar (if needed) -->
+                        <% if (typeof rightSidebar != 'undefined') { %>
+                            <aside class="lg:w-1/4">
+                                <%- rightSidebar %>
+                            </aside>
+                        <% } %> 
+
+                        <!-- Main Content -->
+                        <main class="flex-grow">
+                            <!-- Make toggle button visible on all screens by removing lg:hidden -->
+                            <div class="p-4">
+                                <label for="drawer-toggle" class="btn btn-square btn-ghost">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                    </svg>
+                                </label>
+                            </div>
+                            
+                            <!-- Rest of main content -->
+                            <div class="">
+                                <div class=""> 
+                                    <%- typeof alerts != 'undefined' ? alerts : '' %>
+                                    <%- typeof content != 'undefined' ? content : '' %>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Move sidebar into drawer-side -->
+            <% if (typeof hideSidebar !== 'undefined' && !hideSidebar) { %>
+                <div class="drawer-side">
+                    <label for="drawer-toggle" class="drawer-overlay"></label>
+                    <aside class="w-80">
+                        <%- typeof leftSidebar != 'undefined' ? leftSidebar : include('../navbars/sidebar1') %>
+                    </aside>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="/js/codemirror.js"></script>
+    
+    <!-- Page-specific scripts -->
+    <%- typeof scripts != 'undefined' ? scripts : '' %>
+    
+    <!-- Analytics and other end-of-body scripts -->
+    <%- typeof endScripts != 'undefined' ? endScripts : '' %>
+</body>
+</html>

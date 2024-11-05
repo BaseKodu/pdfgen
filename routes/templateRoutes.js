@@ -9,10 +9,11 @@ router.get("/", ensureAuthenticated, async (req, res) => {
         const userTemplates = await Template.find({ user: req.user._id });
 
         // Rendering the 'templates' view with the correct data
-        res.render('templates', {
+        res.render('pages/templates', {
             title: 'pdfGen | Templates',
-            templates: userTemplates // Passing the correct variable here
-
+            templates: userTemplates,
+            showTemplates: true,  // This enables the template list in sidebar
+            hideSidebar: false 
         });
     } catch (err) {
         res.json({

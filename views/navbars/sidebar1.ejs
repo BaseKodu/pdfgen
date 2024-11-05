@@ -1,0 +1,22 @@
+<!-- Sidebar -->
+<ul class="menu p-4 w-full min-h-full bg-base-200 text-base-content">
+    <li class="mb-2">
+        <h2 class="menu-title text-lg font-bold">Navigation</h2>
+    </li>
+    <li><a class="active">Templates</a>
+        <% if ((typeof templates !== 'undefined') && (templates.length > 0)  && (typeof showTemplates === 'undefined' ? false : showTemplates) ) { %>
+            <ul>
+                <li class="mt-2"><a>Add Template</a></li>
+                <div class="divider"></div>
+                <% templates.forEach(template => { %>
+                    <li><a><%= template.title %></a></li>
+                <% }) %>
+            </ul>
+        <% } %>
+    </li>
+    <li><a>Settings</a></li>
+    <li><a>Profile</a></li>
+    <li class="mt-auto">
+        <a>Logout</a>
+    </li>
+</ul>

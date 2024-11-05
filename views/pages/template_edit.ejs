@@ -1,4 +1,4 @@
-<%- include('layout/header') %>
+<%- contentFor('content') %>
 <div class="drawer lg:drawer-open">
     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
     
@@ -39,6 +39,7 @@
         <%- include('layout/navbars/sidebar1') %>
     </div>
     <script src="/dist/bundle.js"></script>
+
 <script>
     // Initialize CodeMirror
     var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
