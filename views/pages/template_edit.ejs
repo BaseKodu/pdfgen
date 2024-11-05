@@ -1,45 +1,32 @@
+<%- contentFor('leftSidebar') %>
+<%- include('../navbars/sidebar1') %>
+
 <%- contentFor('content') %>
-<div class="drawer lg:drawer-open">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-    
-    <!-- Main Content -->
-    <div class="drawer-content flex flex-col">
-        <!-- Toggle button for mobile -->
-        <div class="lg:hidden">
-            <label for="my-drawer" class="btn btn-square btn-ghost">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </label>
-        </div>
-
-        <!-- Split View Container -->
-        <div class="flex flex-1 overflow-hidden">
-            <!-- Code Editor Section -->
-            <div class="w-1/2 h-screen p-4 border-r">
-                <div class="card bg-base-100 shadow-xl h-full">
-                    <div class="card-body p-0">
-                        <textarea id="codeEditor"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PDF Preview Section -->
-            <div class="w-1/2 h-screen p-4">
-                <div class="card bg-base-100 shadow-xl h-full">
-                    <div class="card-body">
-                        <h2 class="card-title">PDF Preview</h2>
-                        <div class="flex-1 bg-base-200 rounded-lg overflow-hidden">
-                            <iframe id="pdfPreview" class="w-full h-full"></iframe>
-                        </div>
-                    </div>
-                </div>
+<!-- Split View Container -->
+<div class="flex flex-1 overflow-hidden">
+    <!-- Code Editor Section -->
+    <div class="w-1/2 h-screen p-4 border-r">
+        <div class="card bg-base-100 shadow-xl h-full">
+            <div class="card-body p-0">
+                <textarea id="codeEditor"></textarea>
             </div>
         </div>
-        <%- include('layout/navbars/sidebar1') %>
     </div>
-    <script src="/dist/bundle.js"></script>
 
+    <!-- PDF Preview Section -->
+    <div class="w-1/2 h-screen p-4">
+        <div class="card bg-base-100 shadow-xl h-full">
+            <div class="card-body">
+                <h2 class="card-title">PDF Preview</h2>
+                <div class="flex-1 bg-base-200 rounded-lg overflow-hidden">
+                    <iframe id="pdfPreview" class="w-full h-full"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
 <script>
     // Initialize CodeMirror
     var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
@@ -51,11 +38,10 @@
         lineWrapping: true
     });
 
-    // Example function to update PDF preview (you'll need to implement this based on your needs)
+    // Example function to update PDF preview
     function updatePDFPreview() {
         const code = editor.getValue();
         // Here you would typically send the code to your backend to generate/update the PDF
-        // For now, we'll just show a placeholder
         document.getElementById('pdfPreview').src = '/view-pdf/preview';
     }
 
@@ -66,4 +52,3 @@
         timeout = setTimeout(updatePDFPreview, 1000);
     });
 </script>
-<%- include('layout/footer') %>

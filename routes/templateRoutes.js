@@ -47,11 +47,13 @@ router.post('/add-template', ensureAuthenticated, async (req, res) =>{
 
 
 router.get('/edit', ensureAuthenticated, async (req, res) => {
-    try{
+    try {
         const template = await Template.findById(req.params.id);
-        res.render('template_edit', {
+        res.render('pages/template_edit', {
             title: 'pdfGen | Edit Template',
-            template: template
+            template: template,
+            showTemplates: true,  // For sidebar template list
+            hideSidebar: false    // Ensure sidebar is available
         });
     } catch (err) {
         res.json({
