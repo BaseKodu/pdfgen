@@ -45,15 +45,21 @@ router.post('/add-template', ensureAuthenticated, async (req, res) =>{
 });
 
 
-router.get('/edit', ensureAuthenticated, async (req, res) => {
-    try{
+router.get('/edit/:id', ensureAuthenticated, async (req, res) => {
+    try {
         const template = await Template.findById(req.params.id);
+        if (!template) {
+            return res.status(404).json({
+                message: "Template not found",
+                type: "danger"
+            });
+        }
         res.render('template_edit', {
             title: 'pdfGen | Edit Template',
             template: template
         });
     } catch (err) {
-        res.json({
+        res.status(500).json({
             message: err.message,
             type: "danger"
         });

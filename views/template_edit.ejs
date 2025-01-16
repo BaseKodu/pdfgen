@@ -12,7 +12,7 @@
                 </svg>
             </label>
         </div>
-
+        
         <!-- Split View Container -->
         <div class="flex flex-1 overflow-hidden">
             <!-- Code Editor Section -->
@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- PDF Preview Section -->
             <div class="w-1/2 h-screen p-4">
                 <div class="card bg-base-100 shadow-xl h-full">
@@ -38,31 +38,11 @@
         </div>
         <%- include('layout/navbars/sidebar1') %>
     </div>
-    <script src="/dist/bundle.js"></script>
+</div>
+
 <script>
-    // Initialize CodeMirror
-    var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
-        mode: "xml",
-        theme: "monokai",
-        lineNumbers: true,
-        autoCloseTags: true,
-        autoCloseBrackets: true,
-        lineWrapping: true
-    });
-
-    // Example function to update PDF preview (you'll need to implement this based on your needs)
-    function updatePDFPreview() {
-        const code = editor.getValue();
-        // Here you would typically send the code to your backend to generate/update the PDF
-        // For now, we'll just show a placeholder
-        document.getElementById('pdfPreview').src = '/view-pdf/preview';
-    }
-
-    // Update preview when code changes (with debounce)
-    let timeout;
-    editor.on('change', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(updatePDFPreview, 1000);
-    });
+    // Pass template ID to our editor script
+    const templateId = '<%= template._id %>';
 </script>
+<script src="/dist/bundle.js"></script>
 <%- include('layout/footer') %>
