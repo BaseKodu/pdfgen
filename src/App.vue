@@ -1,8 +1,10 @@
 <script setup lang="ts">
+//import Navbar from '@/components/Navbar.vue';
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <p class="text-blue-600 dark:text-sky-400">The quick brown fox...</p>
+  <RouterView />
 </template>
 
 <style scoped>
