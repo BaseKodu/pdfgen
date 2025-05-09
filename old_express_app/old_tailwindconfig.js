@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default{
   content: [
     "./views/**/*.{html,js,ejs}", // adjust based on your template engine
     "./public/**/*.{html,js}"
@@ -7,9 +7,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [
-    require('daisyui')
-  ],
+  //plugins: [
+  //  require('daisyui')
+  //],
 
   daisyui: {
     themes: ["sunset", "nord", "coffee", "dim", "luxury", "forest", "retro"], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
