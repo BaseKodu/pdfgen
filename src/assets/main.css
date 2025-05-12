@@ -1,12 +1,4 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: "sunset", "nord", "coffee", "dim", "luxury", "forest", "retro";
-  darkTheme: "dark",
-  base: true;
-  styled: true;
-  utils: true;
-  prefix: "";
-  logs: true;
-  themeRoot: ":root";
-
+  themes: sunset --default;
 }

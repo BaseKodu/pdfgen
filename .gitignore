@@ -161,3 +161,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+src/config
