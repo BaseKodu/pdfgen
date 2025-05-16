@@ -48,7 +48,7 @@ const emit = defineEmits<{
   (e: 'blur', event: Event): void
 }>()
 
-const id = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`)
+const id = computed(() => 'input-' + useId())
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement

@@ -53,35 +53,34 @@ const handleRegister = async () => {
     <form class="space-y-4">
         <div class="form-control">
             <AppInput
-            v-model="email"
+            v-model="form.email"
             label="Email"
             placeholder="Email"
             type="email"
-            :error="emailError"
             
             />              </div>
         <div class="form-control">
             <AppInput
-            v-model="password"
+            v-model="form.password"
             type="password"
             name="password"
             label="Password"
             placeholder="password"
-            :error="passwordError"
             />
         </div>
         <div class="form-control">
             <AppInput
-            v-model="confirmPassword"
+            v-model="form.confirmPassword"
             type="password"
             name="confirmPassword"
             label="Confirm Password"
             placeholder="Confirm Password"
-            :error="confirmPasswordError"
             />
         </div>
         <div class="form-control mt-6">
-            <AppButton><slot>Register</slot></AppButton>
+            <AppButton 
+                type="submit" 
+                @click="handleRegister"><slot>Register</slot></AppButton>
         </div>
     </form>
 </template>
