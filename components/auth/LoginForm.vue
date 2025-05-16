@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router'
 import AppButton from '~/components/ui/AppButton.vue'
 import AppInput from '~/components/ui/AppInput.vue'
 import AppCard from '~/components/ui/AppCard.vue'
-import AuthView from '~/components/auth/AuthView.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -49,6 +48,31 @@ const handleRegister = async () => {
   }
 }
 </script>
+
 <template>
-  <AuthView />
+    <form class="space-y-4">
+        <div class="form-control">
+            <AppInput
+                v-model="email"
+                label="Email"
+                placeholder="Email"
+                type="email"
+                :error="emailErrpr"
+                
+            />
+        </div>
+        <div class="form-control">
+            <AppInput
+                v-model="password"
+                type="password"
+                name="password"
+                label="Password"
+                placeholder="password"
+                :error="passwordError"
+                />
+        </div>
+        <div class="form-control mt-6">
+            <AppButton><slot>Login</slot></AppButton>
+        </div>
+    </form>
 </template>
