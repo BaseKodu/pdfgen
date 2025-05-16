@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+    <div data-theme="sunset">
+        <NuxtPage />
+    </div>
 </template>
