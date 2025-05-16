@@ -1,16 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import App from '@/App.vue';
+
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const toast = AppToast;
 
 const handleLogin = () => {
   // Handle login logic here
   console.log('Logging in with:', { email: email.value, password: password.value });
 };
 const handleRegister = () => {
-  // Handle registration logic here
+  if (password.value !== confirmPassword.value) {
+    // Handle password mismatch
+    console.error('Passwords do not match');
+    AppToast({
+      message: 'Passwords do not match',
+      type: 'error',
+      placement: 'toast-start toast-middle',
+    });
+    return;
+  }
   console.log('Registering with:', { email: email.value, password: password.value, confirmPassword: confirmPassword.value });
 };
 const handleGoogleSignIn = () => {
