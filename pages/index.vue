@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useAuthStore } from '~/stores/auth'
+import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import AppButton from '~/components/ui/AppButton.vue'
-import AppInput from '~/components/ui/AppInput.vue'
-import AppCard from '~/components/ui/AppCard.vue'
-import AuthView from '~/components/auth/AuthView.vue'
+import AuthView from '../components/auth/AuthView.vue'
+import { navigateTo } from 'nuxt/app'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -43,7 +41,7 @@ const handleRegister = async () => {
     })
     
     // Registration successful, navigate to dashboard
-    router.push('/dashboard')
+   navigateTo("/dashboard")
   } catch (err: any) {
     error.value = err.message || 'Registration failed'
   }

@@ -50,7 +50,7 @@ const handleRegister = async () => {
 </script>
 
 <template>
-    <form class="space-y-4">
+    <form class="space-y-4" @submit.prevent="handleRegister">
         <div class="form-control">
             <AppInput
             v-model="form.email"
@@ -80,7 +80,7 @@ const handleRegister = async () => {
         <div class="form-control mt-6">
             <AppButton 
                 type="submit" 
-                @click="handleRegister"><slot>Register</slot></AppButton>
+                ><slot>Register</slot></AppButton>
         </div>
     </form>
 </template>

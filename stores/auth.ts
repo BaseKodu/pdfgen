@@ -1,9 +1,19 @@
-import  {defineStore} from 'pinia'
-import type { User } from '~/server/services/db';
-import { userService } from '~/server/services/UserService'
+// Step 2: Update the Pinia Auth Store
+// Update file: /stores/auth.ts
+
+import { defineStore } from 'pinia'
+import { userService } from '../server/services/users'
+
+interface User {
+  id: number
+  email: string
+  name: string
+  createdAt: Date
+  updatedAt: Date
+}
 
 interface AuthState {
-  user: Omit<User, 'password'> | null
+  user: User | null
   isAuthenticated: boolean
   error: string | null
   loading: boolean
@@ -31,11 +41,11 @@ export const useAuthStore = defineStore('auth', {
         const user = await userService.register(userData)
         
         if (user) {
-          this.user = user
+          this.user = user as User
           this.isAuthenticated = true
           
           // Store user ID in local storage for persistence
-          localStorage.setItem('userId', user._id || '')
+          localStorage.setItem('userId', user.id.toString())
         }
         
         return user
@@ -52,14 +62,14 @@ export const useAuthStore = defineStore('auth', {
         this.loading = true
         this.error = null
         
-        const user = await userService.login(email, password)
+        const user = await userService.login({ email, password })
         
         if (user) {
-          this.user = user
+          this.user = user as User
           this.isAuthenticated = true
           
           // Store user ID in local storage for persistence
-          localStorage.setItem('userId', user._id || '')
+          localStorage.setItem('userId', user.id.toString())
         }
         
         return user
@@ -73,8 +83,6 @@ export const useAuthStore = defineStore('auth', {
 
     async logout() {
       try {
-        await userService.logout()
-        
         // Clear user state
         this.user = null
         this.isAuthenticated = false
@@ -94,10 +102,10 @@ export const useAuthStore = defineStore('auth', {
           return false
         }
         
-        const user = await userService.getUserById(userId)
+        const user = await userService.getUserById(parseInt(userId))
         
         if (user) {
-          this.user = user
+          this.user = user as User
           this.isAuthenticated = true
           return true
         } else {
