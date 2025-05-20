@@ -13,7 +13,8 @@
     "@nuxt/eslint": "^1.4.0",
     "@nuxt/icon": "^1.13.0",
     "@pinia/nuxt": "^0.11.0",
-   
+    "@prisma/adapter-better-sqlite3": "^6.8.2",
+    "@prisma/client": "^6.8.2",
     "@tailwindcss/vite": "^4.1.7",
     "bcryptjs": "^3.0.2",
     "daisyui": "^5.0.35",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
-    "@types/pouchdb": "^6.4.2"
+    "@types/pouchdb": "^6.4.2",
+    "prisma": "^6.8.2"
   }
 }

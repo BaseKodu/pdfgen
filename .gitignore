@@ -23,3 +23,12 @@ logs
 .env.*
 !.env.example
 instance
+
+# Prisma-related
+/prisma/.env
+/prisma/*.db
+/prisma/*.db-journal
+
+
+# Generated files
+/generated/
