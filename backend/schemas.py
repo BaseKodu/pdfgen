@@ -52,6 +52,12 @@ class TemplateBase(BaseModel):
 class TemplateCreate(TemplateBase):
     pass
 
+
+class TemplateUpdate(BaseModel):
+    content: Optional[str] = None
+    data: Optional[dict] = None
+
+
 class Template(TemplateBase):
     id: str
     user_id: int

@@ -40,8 +40,6 @@ async def create_new_template(
     user: models.User = Depends(current_active_user)):
     
     try:
-        # The enum conversion is already handled by Pydantic in template_data!
-        # No need to manually convert it again
         new_template = models.Template(
             **template_data.model_dump(),
             user_id=user.id
@@ -57,4 +55,43 @@ async def create_new_template(
         raise HTTPException(
             status_code=400,
             detail=f"Error creating template: {str(e)}"
+        )
+
+@router.patch("/templates/{id}", response_model=schemas.Template)
+async def update_template(
+    template_id: str,
+    template_update: schemas.TemplateUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: models.User = Depends(current_active_user)
+):
+    # 1. Get the existing template
+    result = await db.execute(
+        select(models.Template)
+        .where(models.Template.id == template_id)
+        .where(models.Template.user_id == user.id)
+    )
+    template = result.scalars().first()
+    
+    if not template:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Template not found or you don't have permission"
+        )
+
+    # 2. Apply only allowed updates
+    if template_update.content is not None:
+        template.content = template_update.content
+    if template_update.data is not None:
+        template.data = template_update.data
+
+    # 3. Save changes
+    try:
+        await db.commit()
+        await db.refresh(template)
+        return template
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error updating template: {str(e)}"
         )
