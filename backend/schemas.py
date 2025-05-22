@@ -1,7 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Json
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, Any
 from fastapi_users import schemas
+from enum import Enum
+
+
 
 # FastAPI Users schemas
 class UserRead(schemas.BaseUser[int]):
@@ -32,3 +35,28 @@ class UserUpdate(schemas.BaseUserUpdate):
     is_verified: Optional[bool] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+
+
+
+class TemplatingEngineEnum(str, Enum):
+    JSX = "jsx"
+    HTML = "html"
+    VUE = "vue"
+
+class TemplateBase(BaseModel):
+    name: str
+    engine: TemplatingEngineEnum = TemplatingEngineEnum.HTML
+    content: str
+    data: Optional[Dict[str, Any]] = None  # Optional JSON data
+
+class TemplateCreate(TemplateBase):
+    pass
+
+class Template(TemplateBase):
+    id: str
+    user_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
