@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum as SQLEnum, ForeignKey, Text, JSON
+from enum import Enum
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from fastapi_users.db import SQLAlchemyBaseUserTable
@@ -18,10 +19,10 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     templates = relationship("Template", backref="users")
 
 
-class TemplatingEngineEnum(enum.Enum):
+class TemplatingEngineEnum(str, Enum):
     JSX = "jsx"
     HTML = "html"
-    VUE = "vue" 
+    VUE = "vue"
 
 
 class Template(Base):
