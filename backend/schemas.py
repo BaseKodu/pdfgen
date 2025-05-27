@@ -44,6 +44,7 @@ class TemplatingEngineEnum(str, Enum):
     VUE = "vue"
 
 class TemplateBase(BaseModel):
+    id:str
     name: str
     engine: TemplatingEngineEnum = TemplatingEngineEnum.HTML
     content: str
@@ -59,7 +60,6 @@ class TemplateUpdate(BaseModel):
 
 
 class Template(TemplateBase):
-    id: str
     user_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

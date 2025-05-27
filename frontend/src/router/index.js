@@ -21,7 +21,7 @@ const router = createRouter({
       path: '/templates',
       name: 'templates',
       component: TemplatesView,
-      meta: { requiresAuth: true }
+      //meta: { requiresAuth: true }
     }
   ],
 })

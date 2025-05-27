@@ -1,19 +1,36 @@
 <script setup>
 import { ref } from 'vue';
+import AppNavbar from '../components/ui/AppNavbar.vue';
+import AppCard from '../components/ui/AppCard.vue';
+import AddNewTemplate from '../components/modals/AddNewTemplate.vue';
 
+const addNewTemplateModal = ref(null);
 
+const showModal = () => {
+  addNewTemplateModal.value?.showModal();
+};
 </script>
 
 <template>
-  <main class="flex items-center justify-center min-h-screen">
-    <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <div class="card-body">
-        <div class="text-center">
-          <h1 class="text-5xl font-bold">pdfGen</h1>
-          <p class="py-6">Welcome to your templates page, enjoy</p>
-        </div>
-
+  <div class="flex flex-col min-h-screen">
+    <AppNavbar />
+    <div class="p-4">
+      <div class="flex items-end mb-6">
+        <h1 class="text-2xl font-bold">New Template</h1>
+        <button class="btn btn-primary btn-circle" @click="showModal">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
       </div>
     </div>
-  </main>
+
+    <div class="container mx-auto p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <AppCard title="Template 1" description="This is a template" link="/templates/1" />
+      </div>
+    </div>
+
+    <AddNewTemplate ref="addNewTemplateModal" />
+  </div>
 </template>
