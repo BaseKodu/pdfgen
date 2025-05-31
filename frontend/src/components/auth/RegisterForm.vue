@@ -1,6 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import AppButton from '../ui/AppButton.vue'
 import AppInput from '../ui/AppInput.vue'
 import axios from 'axios'

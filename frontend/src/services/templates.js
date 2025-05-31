@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = '/api/'
+const API_URL = '/api'
 
 export const addNewTemplate = async (data) => {
   try {
@@ -12,4 +12,11 @@ export const addNewTemplate = async (data) => {
   }
 }
 
-export const updateTemplate = async
+export const updateTemplate = async (data) => {
+  try {
+    const response = await axios.put(`${API_URL}/templates/${data.id}`, data)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

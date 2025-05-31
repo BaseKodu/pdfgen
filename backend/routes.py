@@ -37,12 +37,13 @@ async def get_user_templates(
 async def create_new_template(
     template_data: schemas.TemplateCreate,
     db: AsyncSession = Depends(get_db),
-    user: models.User = Depends(current_active_user)):
+    #user: models.User = Depends(current_active_user),
+    ):
     
     try:
         new_template = models.Template(
-            **template_data.model_dump(),
-            user_id=user.id
+            **template_data.model_dump(),   
+            #user_id=user.id
         )
 
         db.add(new_template)

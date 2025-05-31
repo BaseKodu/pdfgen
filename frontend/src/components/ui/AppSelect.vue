@@ -47,7 +47,7 @@ const handleChange = (event) => {
 </script>
 
 <template>
-  <div class="form-control w-full">
+  <div class="form-control w-full flex flex-col">
     <label v-if="label" class="label">
       <span class="label-text">{{ label }}</span>
     </label>

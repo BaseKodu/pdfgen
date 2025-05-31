@@ -7,7 +7,7 @@ from schemas import UserCreate, UserRead, UserUpdate
 # Create FastAPI instance
 app = FastAPI(
     title="pdfGen api",
-    descrip1tion="The api for the pdfGen application",
+    description="The api for the pdfGen application",
     version="1.0.0"
 )
 
@@ -19,7 +19,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.middleware("http")
+#@app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"Incoming request: {request.method} {request.url}")
     logger.info(f"Headers: {request.headers}")
@@ -29,36 +29,8 @@ async def log_requests(request: Request, call_next):
         logger.info(f"Raw body: {body.decode()}")  # Log raw request body
     
     response = await call_next(request)
+    logger.info(f"Response status: {response.status_code}")
     return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -107,7 +79,7 @@ app.include_router(
 )
 
 # Include application routes
-app.include_router(routes.router, prefix="/api/v1", tags=["items"])
+app.include_router(routes.router, prefix="/api/v1", tags=["templates"])
 
 # Root endpoint
 @app.get("/")

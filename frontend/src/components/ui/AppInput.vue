@@ -57,7 +57,7 @@ const handleBlur = (event) => {
 
 
 <template>
-  <div class="input-container">
+  <div class="input-container flex flex-col">
     <label v-if="label" :for="id" class="label-text">{{ label }}</label>
     <input
       :id="id"

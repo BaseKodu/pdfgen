@@ -1,13 +1,14 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import AppButton from '../ui/AppButton.vue'
 import AppInput from '../ui/AppInput.vue'
 import AppTextArea from '../ui/AppTextArea.vue'
 import { addNewTemplate } from '../../services/templates';
 import AppSelect from '../ui/AppSelect.vue';
-import { useRouter } from 'vue-router';
 
-router = useRouter();
+const router = useRouter();
 
 const title = ref('');
 const description = ref('');
@@ -20,24 +21,28 @@ defineExpose({
   showModal() {
     document.getElementById('addNewTemplateModal').showModal();
   }
+
 });
 
-const handleSubmit = () => {
+const handleSubmit = async() => {
+  isLoading.value = true;
   try {
-    response = await addNewTemplate({
-      title: email.value,
-      description: password.value
+    const response = await addNewTemplate({
+      name: title.value,
+      //description: description.value,
+      engine: selectedEngine.value.toLowerCase(),
+      content: "Hello world of templates, have a great time designing your pdf template"
     })
 
-    console.log("Registration successful")
+    console.log("Template added successfully")
     router.push(`/templates/${response.id}`)
   } catch (err) {
     console.error('Login error:', err)
     // Handle specific error messages from your API
     if (err.response?.data?.detail) {
-      emailError.value = err.response.data.detail
+      console.log(err.response.data.detail)
     } else {
-      emailError.value = 'Invalid credentials'
+      console.log('Invalid credentials')
     }
   } finally {
     isLoading.value = false
@@ -66,11 +71,9 @@ const handleSubmit = () => {
           <AppSelect label="Engine" :options="['HTML','VUE','JSX']" v-model="selectedEngine"/>
         </div>
 
-        <div class="modal-action">
-          <form method="dialog" @submit.prevent="handleSubmit">
-            <AppButton variant="ghost"><slot>Cancel</slot></AppButton>
-            <AppButton type="submit" :isLoading="isLoading"><slot>Add Template</slot></AppButton>
-          </form>
+        <div class="modal-action justify-between">
+          <AppButton variant="ghost"><slot>Cancel</slot></AppButton>
+          <AppButton :isLoading="isLoading" @click="handleSubmit"><slot>Add Template</slot></AppButton>
         </div>
       </form>
     </div>

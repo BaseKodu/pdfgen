@@ -44,7 +44,7 @@ class TemplatingEngineEnum(str, Enum):
     VUE = "vue"
 
 class TemplateBase(BaseModel):
-    id:str
+    id: Optional[str] = None
     name: str
     engine: TemplatingEngineEnum = TemplatingEngineEnum.HTML
     content: str
