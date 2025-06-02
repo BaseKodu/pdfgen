@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AuthView from '../views/AuthView.vue'
 import { getAuthToken } from '../services/auth'
 import TemplatesView from '../views/TemplatesView.vue'
+import TemplateView from '../views/TemplateView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,12 @@ const router = createRouter({
       path: '/templates',
       name: 'templates',
       component: TemplatesView,
+      //meta: { requiresAuth: true }
+    },
+    {
+      path: '/templates/:id',
+      name: 'template',
+      component: TemplateView,
       //meta: { requiresAuth: true }
     }
   ],
