@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -7,6 +7,8 @@ import models
 import schemas
 from database import get_db
 from auth import current_active_user
+from pydantic import BaseModel
+from utils.playwright_manager import PlaywrightManager
 
 # Create router
 router = APIRouter()
@@ -63,13 +65,13 @@ async def update_template(
     template_id: str,
     template_update: schemas.TemplateUpdate,
     db: AsyncSession = Depends(get_db),
-    user: models.User = Depends(current_active_user)
+    #user: models.User = Depends(current_active_user)
 ):
     # 1. Get the existing template
     result = await db.execute(
         select(models.Template)
         .where(models.Template.id == template_id)
-        .where(models.Template.user_id == user.id)
+        #.where(models.Template.user_id == user.id)
     )
     template = result.scalars().first()
     
@@ -96,3 +98,24 @@ async def update_template(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Error updating template: {str(e)}"
         )
+    
+
+
+@router.post("/generate-pdf", response_model=schemas.PDFRequest)
+async def generate_pdf(pdf_request: schemas.PDFRequest):
+    try:
+        playwright_manager = await PlaywrightManager.get_instance()
+        pdf_bytes = await playwright_manager.generate_pdf(
+            content=pdf_request.content,
+            is_jsx=pdf_request.is_jsx
+        )
+        
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": "attachment; filename=generated.pdf"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 

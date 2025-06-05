@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import routes
 from auth import auth_backend, fastapi_users
 from schemas import UserCreate, UserRead, UserUpdate
+from utils.playwright_manager import PlaywrightManager
 
 # Create FastAPI instance
 app = FastAPI(
@@ -18,6 +19,12 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    playwright_manager = await PlaywrightManager.get_instance()
+    await playwright_manager.cleanup() 
+
 
 #@app.middleware("http")
 async def log_requests(request: Request, call_next):

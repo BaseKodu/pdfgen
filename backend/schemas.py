@@ -66,3 +66,8 @@ class Template(TemplateBase):
     
     class Config:
         from_attributes = True
+
+
+class PDFRequest(BaseModel):
+    content: str
+    is_jsx: bool = False  # Default to false for backward compatibility
