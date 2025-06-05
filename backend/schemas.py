@@ -69,5 +69,6 @@ class Template(TemplateBase):
 
 
 class PDFRequest(BaseModel):
-    content: str
-    is_jsx: bool = False  # Default to false for backward compatibility
+    template_id: Optional[str] = None
+    content: Optional[str] = None
+    is_jsx: Optional[bool] = None  # Default to false for backward compatibility

@@ -131,8 +131,28 @@ async def update_template(
 
 
 @router.post("/generate-pdf", response_model=schemas.PDFRequest)
-async def generate_pdf(pdf_request: schemas.PDFRequest):
+async def generate_pdf(
+    pdf_request: schemas.PDFRequest,
+    db: AsyncSession = Depends(get_db)  # Add database dependency
+):
     try:
+        if pdf_request.template_id:
+            # Query the template directly instead of using the route handler
+            result = await db.execute(
+                select(models.Template)
+                .where(models.Template.id == pdf_request.template_id)
+            )
+            template = result.scalars().first()
+            
+            if not template:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Template not found"
+                )
+                
+            pdf_request.content = template.content
+            pdf_request.is_jsx = template.engine == schemas.TemplatingEngineEnum.JSX
+
         playwright_manager = await PlaywrightManager.get_instance()
         pdf_bytes = await playwright_manager.generate_pdf(
             content=pdf_request.content,
