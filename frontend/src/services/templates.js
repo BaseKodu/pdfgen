@@ -12,9 +12,28 @@ export const addNewTemplate = async (data) => {
   }
 }
 
-export const updateTemplate = async (data) => {
+export const updateTemplate = async (id, data) => {
   try {
-    const response = await axios.put(`${API_URL}/templates/${data.id}`, data)
+    const response = await axios.patch(`${API_URL}/templates/${id}`, data)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const getTemplate = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/templates/${id}`)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+
+export const getTemplates = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/templates`)
     return response.data
   } catch (error) {
     throw error

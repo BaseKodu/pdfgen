@@ -25,10 +25,14 @@ def get_current_user(user: models.User = Depends(current_active_user)):
 @router.get("/templates", response_model=List[schemas.Template], status_code=status.HTTP_200_OK)
 async def get_user_templates(
     db: AsyncSession = Depends(get_db),
-    user: models.User = Depends(current_active_user)):
+    #user: models.User = Depends(current_active_user)
+    ):
     
     try:
-        result = await db.execute(select(models.Template).where(models.Template.user_id == user.id))
+        result = await db.execute(
+            select(models.Template)
+            #.where(models.Template.user_id == user.id)
+            )
         templates = result.scalars().all()
         return templates
     except Exception as e:
@@ -59,18 +63,40 @@ async def create_new_template(
             status_code=400,
             detail=f"Error creating template: {str(e)}"
         )
+    
+@router.get("/templates/{id}", response_model=schemas.Template)
+async def get_template(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    #user: models.User = Depends(current_active_user)
+):
+    result = await db.execute(
+        select(models.Template)
+        .where(models.Template.id == id)
+        #.where(models.Template.user_id == user.id)
+    )
+    template = result.scalars().first()
+    
+    if not template:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Template not found"
+        )
+
+    return template
+
 
 @router.patch("/templates/{id}", response_model=schemas.Template)
 async def update_template(
-    template_id: str,
+    id: str,
     template_update: schemas.TemplateUpdate,
     db: AsyncSession = Depends(get_db),
     #user: models.User = Depends(current_active_user)
 ):
-    # 1. Get the existing template
+    
     result = await db.execute(
         select(models.Template)
-        .where(models.Template.id == template_id)
+        .where(models.Template.id == id)
         #.where(models.Template.user_id == user.id)
     )
     template = result.scalars().first()
@@ -80,6 +106,9 @@ async def update_template(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Template not found or you don't have permission"
         )
+
+    print(template_update)
+
 
     # 2. Apply only allowed updates
     if template_update.content is not None:

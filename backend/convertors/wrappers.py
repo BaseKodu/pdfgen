@@ -8,7 +8,7 @@ class JSXConverter:
     def __init__(self, node_script_path="convertors/jsx-converter.js"):
         self.node_script_path = node_script_path
         
-    def convert(self, jsx_string, context=None):
+    def convert(self, jsx_string:str, context=None):
         """
         Convert JSX string to HTML using Node.js
         

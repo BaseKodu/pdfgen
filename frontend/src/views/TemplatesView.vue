@@ -1,10 +1,25 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import AppNavbar from '../components/ui/AppNavbar.vue';
 import AppCard from '../components/ui/AppCard.vue';
 import AddNewTemplate from '../components/modals/AddNewTemplate.vue';
+import { getTemplates } from '../services/templates';
 
 const addNewTemplateModal = ref(null);
+const templates = ref([]);
+
+const getUserTemplates = async () => {
+  try{
+    const response = await getTemplates();
+    templates.value = response;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+onMounted(() => {
+  getUserTemplates();
+});
 
 const showModal = () => {
   addNewTemplateModal.value?.showModal();
@@ -26,9 +41,11 @@ const showModal = () => {
     </div>
 
     <div class="container mx-auto p-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AppCard title="Template 1" description="This is a template" link="/templates/1" />
-      </div>
+      <section v-for="template in templates" :key="template.id">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <AppCard :title="template.name" :description="template.description" :link="`/templates/${template.id}`" />
+        </div>
+      </section>
     </div>
 
     <AddNewTemplate ref="addNewTemplateModal" />

@@ -1,11 +1,9 @@
-
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { html } from '@codemirror/lang-html'
 import { oneDark } from '@codemirror/theme-one-dark'
-
 
 const props = defineProps({
   engine: {
@@ -18,8 +16,22 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['update:content'])
+
 const engine = ref(props.engine)
-const content = ref(props.content)
+const editorContent = ref(props.content)
+
+// Watch for changes in the content prop
+watch(() => props.content, (newContent) => {
+  if (newContent !== editorContent.value) {
+    editorContent.value = newContent
+  }
+}, { immediate: true })
+
+// Watch for changes in the editor content
+watch(editorContent, (newContent) => {
+  emit('update:content', newContent)
+})
 
 const language = () => {
   if (engine.value === 'html') {
@@ -32,20 +44,14 @@ const language = () => {
 }
 
 const extensions = [language(), oneDark]
-
-
-const onChange = (value) => {
-  console.log('changed:', value)
-}
 </script>
 
 <template>
   <div class="editor-container">
     <Codemirror
-      v-model="content"
+      v-model="editorContent"
       :extensions="extensions"
       :style="{ height: '400px' }"
-      @change="onChange"
     />
   </div>
 </template>

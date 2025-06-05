@@ -24,6 +24,7 @@ function jsxToHtml(jsx, context = {}) {
     }
   });
   
+  
   // Convert JSX attributes to HTML
   html = html.replace(/className=/g, 'class=');
   

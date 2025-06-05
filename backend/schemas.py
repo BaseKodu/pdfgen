@@ -60,8 +60,8 @@ class TemplateUpdate(BaseModel):
 
 
 class Template(TemplateBase):
-    user_id: int
-    created_at: datetime
+    #user_id: int
+    created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     
     class Config:
