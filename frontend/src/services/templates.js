@@ -39,3 +39,18 @@ export const getTemplates = async () => {
     throw error
   }
 }
+
+
+export const generatePDF = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/generate-pdf`, data, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/pdf'
+      }
+    })
+    return response
+  } catch (error) {
+    throw error
+  }
+}

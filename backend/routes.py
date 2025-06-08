@@ -107,7 +107,6 @@ async def update_template(
             detail="Template not found or you don't have permission"
         )
 
-    print(template_update)
 
 
     # 2. Apply only allowed updates
