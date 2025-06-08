@@ -44,18 +44,22 @@ function advancedJsxToHtml(jsx, context = {}) {
   
   // Handle map operations: {items.map(item => `<li>${item}</li>`)}
   processed = processed.replace(
-    /\{([^}]*?)\.map\(([^)]+)\)\}/g, 
-    (match, arrayExpr, mapFunc) => {
-      try {
-        const func = new Function(...Object.keys(context), `
-          const array = ${arrayExpr};
-          return array.map(${mapFunc}).join('');
-        `);
-        return func(...Object.values(context));
-      } catch (e) {
-        console.warn(`Error in map operation: ${match}`, e);
-        return '';
-      }
+    /\{([^}]*?)\.map\(([^)]+)\s*=>\s*\(([\s\S]*?)\)\)\}/g,  
+    (match, arrayExpr, param, jsxContent) => {
+        try {
+            const func = new Function(...Object.keys(context), `
+                const array = ${arrayExpr};
+                if (!Array.isArray(array)) return '';
+                return array.map(${param} => {
+                    // Replace JSX expressions inside the mapped content
+                    return \`${jsxContent.replace(/\{([^}]+)\}/g, '${$1}')}\`;
+                }).join('');
+            `);
+            return func(...Object.values(context));
+        } catch (e) {
+            console.warn(`Error in map operation: ${match}`, e);
+            return '';
+        }
     }
   );
   
@@ -125,5 +129,53 @@ if (require.main === module) {
   const html = advancedJsxToHtml(jsx, context);
   console.log(html);
 }
+
+// Test the coverter above
+function test() {
+    const jsx = `
+        <table>
+            <tbody>
+                {lineItems.map(lineItem => (
+                    <tr>
+                        <td>{lineItem.item}</td>
+                        <td>{lineItem.description}</td>
+                        <td>{lineItem.quantity}</td>
+                        <td>{lineItem.price}</td>
+                        <td>{lineItem.tax}</td>
+                        <td>{lineItem.total}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    `;
+
+    const context = {
+        lineItems: [
+            {
+                tax: "6%",
+                item: "Surf Board",
+                price: "$1,000",
+                total: "$1,060.00",
+                quantity: "1",
+                description: "Rides big waves"
+            },
+            {
+                tax: "6%",
+                item: "Board Wax",
+                price: "$75",
+                total: "$159.00",
+                quantity: "2",
+                description: "Best wax in town"
+            }
+        ]
+    };
+
+    console.log(advancedJsxToHtml(jsx, context));
+}
+
+// Uncomment to run test
+// if (require.main === module) {
+//     test();
+// }
 
 module.exports = { jsxToHtml, advancedJsxToHtml };

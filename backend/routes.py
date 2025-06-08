@@ -152,10 +152,12 @@ async def generate_pdf(
                 
             pdf_request.content = template.content
             pdf_request.is_jsx = template.engine == schemas.TemplatingEngineEnum.JSX
+            pdf_request.data = template.data
 
         playwright_manager = await PlaywrightManager.get_instance()
         pdf_bytes = await playwright_manager.generate_pdf(
             content=pdf_request.content,
+            context=pdf_request.data,
             is_jsx=pdf_request.is_jsx
         )
         
