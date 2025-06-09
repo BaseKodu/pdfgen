@@ -68,7 +68,7 @@ const dataExtensions = [json(), oneDark]
 
 <template>
   <div class="editor-container">
-    <div class="tabs tabs-boxed mb-2">
+    <div class="tabs tabs-boxed tabs-border mb-2">
       <a
         class="tab"
         :class="{ 'tab-active': activeTab === 'code' }"
