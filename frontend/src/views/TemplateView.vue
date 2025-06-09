@@ -12,13 +12,14 @@ const templateId = route.params.id
 const pdfPreviewRef = ref(null)
 const isLoading = ref(false)
 const code = ref('')
+const data = ref('{\n  // Add your template data here\n}')
 
 const getCurrentTemplate = async() => {
   try {
     isLoading.value = true
     const response = await getTemplate(templateId)
     code.value = response.content
-    //console.log(response)
+    data.value = response.data ? JSON.stringify(response.data, null, 2) : '{\n  // Add your template data here\n}'
   } catch (error) {
     console.error('Error fetching template:', error)
   } finally {
@@ -29,11 +30,19 @@ const getCurrentTemplate = async() => {
 const saveTemplate = async() => {
   try {
     isLoading.value = true
-    const data = {
-      content: code.value,
-      //data: {}
+    let parsedData = {}
+    try {
+      parsedData = JSON.parse(data.value)
+    } catch (e) {
+      console.error('Invalid JSON data:', e)
+      return
     }
-    await updateTemplate(templateId, data)
+
+    const templateData = {
+      content: code.value,
+      data: parsedData
+    }
+    await updateTemplate(templateId, templateData)
     // Generate PDF preview after successful save
     await pdfPreviewRef.value.updatePreview()
   } catch (error) {
@@ -54,28 +63,24 @@ onMounted(() => {
   <div class="flex flex-col min-h-screen">
     <AppNavbar />
 
-    <div class="container mx-auto p-4">
-      <h1 class="text-2xl font-bold">Template {{ templateId }}</h1>
-    </div>
-
     <div class="flex flex-1">
-      <div class="w-1/2 p-4 flex flex-col">
-        <div class="mb-4">
-          <AppButton @click="saveTemplate" :isLoading="isLoading" class="w-full">
+      <div class="w-1/2 p-1 flex flex-col">
+        <div class="flex flex-col">
+          <CodeEditor
+            v-model:content="code"
+            v-model:data="data"
+            :engine="'jsx'"
+          />
+          <AppButton @click="saveTemplate" :isLoading="isLoading" class="mt-2">
             Save Template & Generate PDF
           </AppButton>
         </div>
-        <div class="flex-1">
-          <CodeEditor
-            v-model:content="code"
-            :engine="'jsx'"
-          />
-        </div>
       </div>
-      <div class="w-1/2 p-4 h-[calc(100vh-120px)]">
+      <div class="w-1/2 p-4 flex flex-col">
         <PDFPreview
           ref="pdfPreviewRef"
           :templateId="templateId"
+
         />
       </div>
     </div>

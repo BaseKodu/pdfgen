@@ -6,7 +6,7 @@
     <iframe
       v-else-if="pdfUrl"
       :src="pdfUrl"
-      class="w-full h-full border rounded-lg"
+      class="w-full h-full border rounded-lg mt-8"
       type="application/pdf"
     ></iframe>
     <div v-else class="flex items-center justify-center h-full text-gray-500">
