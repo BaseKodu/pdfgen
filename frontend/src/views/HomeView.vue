@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const features = [
   {
@@ -23,6 +24,33 @@ const features = [
     icon: '🐳'
   }
 ];
+
+const startOptions = [
+  {
+    title: 'Create Account',
+    description: 'Sign up to save your templates, manage API keys, and access all features',
+    icon: '👤',
+    action: 'Sign Up',
+    route: '/login',
+    style: 'btn-primary'
+  },
+  {
+    title: 'Try Instantly',
+    description: 'Start creating templates right away with browser-only storage',
+    icon: '🚀',
+    action: 'Start Now',
+    route: '/templates',
+    style: 'btn-secondary'
+  },
+  {
+    title: 'Self Host',
+    description: 'Clone or fork the repository to run your own instance',
+    icon: '📦',
+    action: 'View Repository',
+    link: 'https://github.com/Basekodu/pdfgen',
+    style: 'btn-outline'
+  }
+];
 </script>
 
 <template>
@@ -33,9 +61,36 @@ const features = [
       <p class="text-xl text-base-content/80 mb-8">
         Transform your templates into beautiful PDFs with ease
       </p>
-      <div class="flex gap-4 justify-center">
-        <button class="btn btn-primary">Get Started</button>
-        <button class="btn btn-outline">View Documentation</button>
+    </div>
+
+    <!-- Get Started Options -->
+    <div class="max-w-5xl mx-auto mb-20">
+      <h2 class="text-3xl font-bold text-center mb-12">Choose Your Path</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div v-for="option in startOptions" :key="option.title"
+             class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">{{ option.icon }}</div>
+            <h3 class="text-xl font-bold mb-2">{{ option.title }}</h3>
+            <p class="text-base-content/70 mb-6">{{ option.description }}</p>
+            <div class="card-actions justify-center">
+              <RouterLink
+                v-if="option.route"
+                :to="option.route"
+                :class="['btn', option.style]">
+                {{ option.action }}
+              </RouterLink>
+              <a
+                v-else
+                :href="option.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                :class="['btn', option.style]">
+                {{ option.action }}
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
