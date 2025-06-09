@@ -25,13 +25,13 @@ def get_current_user(user: models.User = Depends(current_active_user)):
 @router.get("/templates", response_model=List[schemas.Template], status_code=status.HTTP_200_OK)
 async def get_user_templates(
     db: AsyncSession = Depends(get_db),
-    #user: models.User = Depends(current_active_user)
+    user: models.User = Depends(current_active_user)
     ):
     
     try:
         result = await db.execute(
             select(models.Template)
-            #.where(models.Template.user_id == user.id)
+            .where(models.Template.user_id == user.id)
             )
         templates = result.scalars().all()
         return templates
@@ -43,13 +43,13 @@ async def get_user_templates(
 async def create_new_template(
     template_data: schemas.TemplateCreate,
     db: AsyncSession = Depends(get_db),
-    #user: models.User = Depends(current_active_user),
+    user: models.User = Depends(current_active_user),
     ):
     
     try:
         new_template = models.Template(
             **template_data.model_dump(),   
-            #user_id=user.id
+            user_id=user.id
         )
 
         db.add(new_template)
@@ -68,12 +68,12 @@ async def create_new_template(
 async def get_template(
     id: str,
     db: AsyncSession = Depends(get_db),
-    #user: models.User = Depends(current_active_user)
+    user: models.User = Depends(current_active_user)
 ):
     result = await db.execute(
         select(models.Template)
         .where(models.Template.id == id)
-        #.where(models.Template.user_id == user.id)
+        .where(models.Template.user_id == user.id)
     )
     template = result.scalars().first()
     
@@ -91,13 +91,13 @@ async def update_template(
     id: str,
     template_update: schemas.TemplateUpdate,
     db: AsyncSession = Depends(get_db),
-    #user: models.User = Depends(current_active_user)
+    user: models.User = Depends(current_active_user)
 ):
     
     result = await db.execute(
         select(models.Template)
         .where(models.Template.id == id)
-        #.where(models.Template.user_id == user.id)
+        .where(models.Template.user_id == user.id)
     )
     template = result.scalars().first()
     
