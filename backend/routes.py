@@ -6,9 +6,10 @@ from typing import List
 import models
 import schemas
 from database import get_db
-from auth import current_active_user
+from auth import current_active_user, get_user_manager
 from pydantic import BaseModel
 from utils.playwright_manager import PlaywrightManager
+from nanoid import generate
 
 # Create router
 router = APIRouter()
@@ -168,4 +169,47 @@ async def generate_pdf(
             }
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/guest", response_model=schemas.GuestUserResponse)
+async def create_guest_user(
+    db: AsyncSession = Depends(get_db),
+    user_manager = Depends(get_user_manager)
+):
+    try:
+        # Generate a unique guest email
+        guest_email = f"guest_{generate(size=10)}@guest.com"
+        # Create a random password
+        guest_password = generate(size=20)
+        
+        # Create guest user using UserCreate schema
+        guest_user = await user_manager.create(
+            schemas.UserCreate(
+                email=guest_email,
+                password=guest_password,
+                is_active=True
+            )
+        )
+        
+        # Set is_guest flag after creation
+        guest_user.is_guest = True
+        await db.commit()
+        await db.refresh(guest_user)
+        
+        # Create response with password
+        response = schemas.GuestUserResponse(
+            id=guest_user.id,
+            email=guest_user.email,
+            password=guest_password,  # Include the original password
+            is_active=guest_user.is_active,
+            is_guest=guest_user.is_guest,
+            created_at=guest_user.created_at,
+            updated_at=guest_user.updated_at
+        )
+        
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error creating guest user: {str(e)}"
+        ) 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const API_URL = '/api/auth/jwt'
+const API_URL = '/api'
 
 // Cookie configuration
 const TOKEN_COOKIE = 'auth_token'
@@ -43,7 +43,7 @@ export const login = async (credentials) => {
       client_secret: ''
     })
 
-    const response = await axios.post(`${API_URL}/login`, formData, {
+    const response = await axios.post(`${API_URL}/auth/jwt/login`, formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -55,6 +55,24 @@ export const login = async (credentials) => {
 
     return response.data
   } catch (error) {
+    throw error
+  }
+}
+
+export const loginAsGuest = async () => {
+  try {
+    // Create guest user
+    const guestResponse = await axios.post(`${API_URL}/guest`)
+
+    // Login with guest credentials
+    const loginResponse = await login({
+      username: guestResponse.data.email,
+      password: guestResponse.data.password
+    })
+
+    return loginResponse
+  } catch (error) {
+    console.error('Guest login error:', error)
     throw error
   }
 }

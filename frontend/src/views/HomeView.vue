@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
+import { loginAsGuest } from '../services/auth';
 
 const features = [
   {
@@ -25,6 +26,8 @@ const features = [
   }
 ];
 
+const router = useRouter();
+
 const startOptions = [
   {
     title: 'Create Account',
@@ -35,12 +38,13 @@ const startOptions = [
     style: 'btn-primary'
   },
   {
-    title: 'Try Instantly',
-    description: 'Start creating templates right away with browser-only storage',
+    title: 'Continue as Guest',
+    description: 'Start creating templates right away without signing up',
     icon: '🚀',
-    action: 'Start Now',
+    action: 'Start as Guest',
     route: '/templates',
-    style: 'btn-secondary'
+    style: 'btn-secondary',
+    isGuest: true
   },
   {
     title: 'Self Host',
@@ -51,6 +55,15 @@ const startOptions = [
     style: 'btn-outline'
   }
 ];
+
+const handleGuestLogin = async () => {
+  try {
+    await loginAsGuest();
+    router.push('/templates');
+  } catch (error) {
+    console.error('Guest login error:', error);
+  }
+};
 </script>
 
 <template>
@@ -75,11 +88,17 @@ const startOptions = [
             <p class="text-base-content/70 mb-6">{{ option.description }}</p>
             <div class="card-actions justify-center">
               <RouterLink
-                v-if="option.route"
+                v-if="option.route && !option.isGuest"
                 :to="option.route"
                 :class="['btn', option.style]">
                 {{ option.action }}
               </RouterLink>
+              <button
+                v-else-if="option.isGuest"
+                @click="handleGuestLogin"
+                :class="['btn', option.style]">
+                {{ option.action }}
+              </button>
               <a
                 v-else
                 :href="option.link"

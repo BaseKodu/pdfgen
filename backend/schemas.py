@@ -73,3 +73,15 @@ class PDFRequest(BaseModel):
     content: Optional[str] = None
     is_jsx: Optional[bool] = None  # Default to false for backward compatibility
     data: Optional[dict] = None
+
+class GuestUserResponse(BaseModel):
+    id: int
+    email: str
+    password: str  # Include password in response
+    is_active: bool = True
+    is_guest: bool = True
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
