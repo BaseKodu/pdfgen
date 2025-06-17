@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router';
 
 const props = defineProps({
   title: {
@@ -18,12 +19,12 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="card bg-base-100 shadow-xl">
+  <div class="card bg-base-100 shadow-xl gap-4">
     <div class="card-body">
       <h2 class="card-title">{{ title }}</h2>
       <p>{{ description }}</p>
       <div class="card-actions justify-end">
-        <a class="btn btn-primary" :href="link">Select</a>
+        <RouterLink :to="link" class="btn btn-primary">Select</RouterLink>
       </div>
     </div>
   </div>

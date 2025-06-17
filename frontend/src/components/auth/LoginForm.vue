@@ -21,11 +21,12 @@ const handleLogin = async () => {
   passwordError.value = ''
 
   try {
-    await login({
+    const response = await login({
       username: email.value,
       password: password.value
     })
     console.log("Registration successful")
+    console.log(response)
     // Redirect to protected route after successful login
     router.push('/templates')
   } catch (err) {
