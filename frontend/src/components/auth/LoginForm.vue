@@ -40,7 +40,7 @@ const handleLogin = async () => {
       errorMessage = err.response.data.detail
       emailError.value = err.response.data.detail
     } else {
-      emailError.value = 'Invalid credentials'
+      emailError.value = 'Login failed. Please try again.'
     }
     showError(errorMessage)
   } finally {
