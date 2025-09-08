@@ -1,5 +1,4 @@
 <script setup>
-import { VueSpinnerSync } from  'vue3-spinners';
 
 const props = defineProps({
   variant: {
@@ -29,21 +28,20 @@ const handleClick = (event) => {
     emit('click', event)
   }
 }
+
+
+
 </script>
 
 <template>
-  <section v-if="!isLoading">
-    <button
-      :class="['btn', 'btn-active', `btn-${variant}`]"
-      :type="type"
-      :disabled="disabled"
-      @click="handleClick"
-    >
-      <slot></slot>
-    </button>
-  </section>
-  <div v-else>
-    <VueSpinnerSync />
-  </div>
+  <button
+    :class="['btn', 'btn-soft', `btn-${variant}`]"
+    :type="type"
+    :disabled="disabled || isLoading"
+    @click="handleClick"
+  >
+    <span v-if="isLoading" class="loading loading-dots"></span>
+    <slot v-if="!isLoading"></slot>
+  </button>
 </template>
 

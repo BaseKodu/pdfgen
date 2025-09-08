@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { loginAsGuest } from '../services/auth';
+import AppCard from '../components/ui/AppCard.vue';
 
 const features = [
   {
@@ -27,6 +28,7 @@ const features = [
 ];
 
 const router = useRouter();
+const isGuestLoading = ref(false);
 
 const startOptions = [
   {
@@ -52,16 +54,25 @@ const startOptions = [
     icon: '📦',
     action: 'View Repository',
     link: 'https://github.com/Basekodu/pdfgen',
-    style: 'btn-outline'
+    style: ''
   }
 ];
 
 const handleGuestLogin = async () => {
   try {
+    isGuestLoading.value = true;
     await loginAsGuest();
     router.push('/templates');
   } catch (error) {
     console.error('Guest login error:', error);
+  } finally {
+    isGuestLoading.value = false;
+  }
+};
+
+const handleCardAction = (option) => {
+  if (option.isGuest) {
+    handleGuestLogin();
   }
 };
 </script>
@@ -80,50 +91,35 @@ const handleGuestLogin = async () => {
     <div class="max-w-5xl mx-auto mb-20">
       <h2 class="text-3xl font-bold text-center mb-12">Choose Your Path</h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <div v-for="option in startOptions" :key="option.title"
-             class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-          <div class="card-body text-center">
-            <div class="text-4xl mb-4">{{ option.icon }}</div>
-            <h3 class="text-xl font-bold mb-2">{{ option.title }}</h3>
-            <p class="text-base-content/70 mb-6">{{ option.description }}</p>
-            <div class="card-actions justify-center">
-              <RouterLink
-                v-if="option.route && !option.isGuest"
-                :to="option.route"
-                :class="['btn', option.style]">
-                {{ option.action }}
-              </RouterLink>
-              <button
-                v-else-if="option.isGuest"
-                @click="handleGuestLogin"
-                :class="['btn', option.style]">
-                {{ option.action }}
-              </button>
-              <a
-                v-else
-                :href="option.link"
-                target="_blank"
-                rel="noopener noreferrer"
-                :class="['btn', option.style]">
-                {{ option.action }}
-              </a>
-            </div>
-          </div>
-        </div>
+        <AppCard
+          v-for="option in startOptions"
+          :key="option.title"
+          :title="option.title"
+          :description="option.description"
+          :icon="option.icon"
+          :action-text="option.action"
+          :action-style="option.style"
+          :route="option.route && !option.isGuest ? option.route : null"
+          :external-link="option.link"
+          :is-button="option.isGuest"
+          :is-loading="option.isGuest ? isGuestLoading : false"
+          :centered="true"
+          @action="() => handleCardAction(option)"
+        />
       </div>
     </div>
 
     <!-- Features Grid -->
     <div class="max-w-6xl mx-auto">
       <div class="grid md:grid-cols-2 gap-8">
-        <div v-for="feature in features" :key="feature.title"
-             class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
-          <div class="card-body">
-            <div class="text-4xl mb-4">{{ feature.icon }}</div>
-            <h2 class="card-title">{{ feature.title }}</h2>
-            <p class="text-base-content/70">{{ feature.description }}</p>
-          </div>
-        </div>
+        <AppCard
+          v-for="feature in features"
+          :key="feature.title"
+          :title="feature.title"
+          :description="feature.description"
+          :icon="feature.icon"
+          :show-action="false"
+        />
       </div>
     </div>
 
