@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue'
+import { useToast } from '../../composables/useToast'
 import AppButton from '../ui/AppButton.vue'
 import AppInput from '../ui/AppInput.vue'
 import axios from 'axios'
 
 const emit = defineEmits(['registration-success'])
-
+const { showError, showSuccess } = useToast()
 
 const email = ref('')
 const password = ref('')
@@ -30,12 +31,14 @@ const handleRegister = async () => {
   // Validate form data
   if (password.value.length < 6) {
     passwordError.value = 'Password must be at least 6 characters'
+    showError('Password must be at least 6 characters')
     isLoading.value = false
     return
   }
 
   if (password.value !== confirmPassword.value) {
     confirmPasswordError.value = 'Passwords do not match'
+    showError('Passwords do not match')
     isLoading.value = false
     return
   }
@@ -46,9 +49,23 @@ const handleRegister = async () => {
       password: password.value,
     });
     console.log('Created:', response.data)
+    showSuccess('Registration successful! Please login with your new account.')
     emit('registration-success')
   } catch (err) {
     console.error('Error:', err.response?.data || err.message)
+    let errorMessage = 'Registration failed. Please try again.'
+
+    if (err.response?.data?.detail) {
+      errorMessage = err.response.data.detail
+    } else if (err.response?.data?.message) {
+      errorMessage = err.response.data.message
+    } else if (err.response?.status === 400) {
+      errorMessage = 'Invalid registration data. Please check your inputs.'
+    } else if (err.response?.status === 409) {
+      errorMessage = 'Email already exists. Please use a different email.'
+    }
+
+    showError(errorMessage)
   } finally {
     // Ensure loading state is always set to false when done
     isLoading.value = false

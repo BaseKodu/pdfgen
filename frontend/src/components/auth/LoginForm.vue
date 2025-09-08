@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from '../../composables/useToast'
 import AppButton from '../ui/AppButton.vue'
 import AppInput from '../ui/AppInput.vue'
 import { login } from '../../services/auth'
 
 const router = useRouter()
+const { showError, showSuccess } = useToast()
 
 const email = ref('')
 const password = ref('')
@@ -25,18 +27,22 @@ const handleLogin = async () => {
       username: email.value,
       password: password.value
     })
-    console.log("Registration successful")
+    console.log("Login successful")
     console.log(response)
+    showSuccess('Login successful! Redirecting...')
     // Redirect to protected route after successful login
     router.push('/templates')
   } catch (err) {
     console.error('Login error:', err)
     // Handle specific error messages from your API
+    let errorMessage = 'Invalid credentials'
     if (err.response?.data?.detail) {
+      errorMessage = err.response.data.detail
       emailError.value = err.response.data.detail
     } else {
       emailError.value = 'Invalid credentials'
     }
+    showError(errorMessage)
   } finally {
     isLoading.value = false
   }

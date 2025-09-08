@@ -1,6 +1,7 @@
 <script setup>
 import RegisterForm from '../components/auth/RegisterForm.vue';
 import LoginForm from '../components/auth/LoginForm.vue';
+import AppToast from '../components/ui/AppToast.vue';
 import { ref } from 'vue';
 
 const activeTab = ref('login');
@@ -12,6 +13,8 @@ const onRegistrationSuccess = () => {
 
 <template>
   <main class="flex items-center justify-center min-h-screen">
+    <!-- Toast notifications -->
+    <AppToast position="top-center" />
     <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
       <div class="card-body">
         <div class="text-center">
