@@ -5,7 +5,6 @@ import { loginAsGuest } from '../services/auth';
 import { useToast } from '../composables/useToast';
 import { useAuth } from '../composables/useAuth';
 import AppCard from '../components/ui/AppCard.vue';
-import AppToast from '../components/ui/AppToast.vue';
 
 const features = [
   {
@@ -89,8 +88,6 @@ const handleCardAction = (option) => {
 
 <template>
   <main class="min-h-screen bg-gradient-to-br from-base-100 to-base-200 py-12 px-4">
-    <!-- Toast notifications -->
-    <AppToast position="top-center" />
     <!-- Hero Section -->
     <div class="max-w-6xl mx-auto text-center mb-16">
       <h1 class="text-6xl font-bold mb-4">pdfGen</h1>

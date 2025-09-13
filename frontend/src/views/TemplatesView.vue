@@ -69,7 +69,9 @@ const showModal = () => {
           :key="template.id"
           :title="template.name"
           :description="template.description"
-          :link="`/templates/${template.id}`"
+          :route="`/templates/${template.id}`"
+          action-text="View Template"
+          action-style="btn-primary"
           class="hover:shadow-lg transition-shadow"
         />
       </div>
