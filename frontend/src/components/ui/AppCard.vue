@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import AppButton from './AppButton.vue';
 
@@ -62,10 +63,10 @@ const handleButtonClick = () => {
   emit('action');
 };
 
-// Extract variant from btn- prefixed style
-const getButtonVariant = (actionStyle) => {
-  return actionStyle?.replace('btn-', '') || 'primary';
-};
+// Extract variant from btn- prefixed style as computed property
+const buttonVariant = computed(() => {
+  return props.actionStyle?.replace('btn-', '') || 'primary';
+});
 </script>
 
 <template>
@@ -85,7 +86,7 @@ const getButtonVariant = (actionStyle) => {
         <!-- Button for custom actions -->
         <AppButton
           v-else-if="isButton"
-          :variant="getButtonVariant(actionStyle)"
+          :variant="buttonVariant"
           :is-loading="isLoading"
           @click="handleButtonClick">
           {{ actionText }}

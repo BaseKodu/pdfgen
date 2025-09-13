@@ -6,6 +6,7 @@ import AppButton from '../components/ui/AppButton.vue'
 import PDFPreview from '../components/templates/PDFPreview.vue'
 import { updateTemplate, getTemplate } from '../services/templates'
 import { useToast } from '../composables/useToast'
+import { handleTemplateError, validateJson, getSuccessMessage } from '../utils/errorHandler'
 
 const route = useRoute()
 const templateId = route.params.id
@@ -24,24 +25,10 @@ const getCurrentTemplate = async() => {
     data.value = response.data ? JSON.stringify(response.data, null, 2) : '{\n  // Add your template data here\n}'
 
     // Only show success message if this is a retry/refresh, not on initial load
-    if (code.value) {
-      console.log('Template loaded successfully')
-    }
+    console.log('Template loaded successfully')
   } catch (error) {
-    console.error('Error fetching template:', error)
-
-    // Handle different error scenarios
-    if (error.response?.status === 404) {
-      showError('Template not found. It may have been deleted or you don\'t have permission to access it.')
-    } else if (error.response?.status === 403) {
-      showError('You don\'t have permission to access this template.')
-    } else if (error.response?.status >= 500) {
-      showError('Server error occurred while loading the template. Please try again later.')
-    } else if (!navigator.onLine) {
-      showError('No internet connection. Please check your network and try again.')
-    } else {
-      showError('Failed to load template. Please try again.')
-    }
+    const errorResult = handleTemplateError(error, 'load')
+    showError(errorResult.message)
   } finally {
     isLoading.value = false
   }
@@ -50,24 +37,21 @@ const getCurrentTemplate = async() => {
 const saveTemplate = async() => {
   try {
     isLoading.value = true
-    let parsedData = {}
 
     // Validate JSON data first
-    try {
-      parsedData = JSON.parse(data.value)
-    } catch (e) {
-      console.error('Invalid JSON data:', e)
-      showError('Invalid JSON format in template data. Please check your syntax and try again.')
+    const jsonValidation = validateJson(data.value)
+    if (!jsonValidation.success) {
+      showError(jsonValidation.message)
       return
     }
 
     const templateData = {
       content: code.value,
-      data: parsedData
+      data: jsonValidation.data
     }
 
     await updateTemplate(templateId, templateData)
-    showSuccess('Template saved successfully!')
+    showSuccess(getSuccessMessage('save', 'Template'))
 
     // Generate PDF preview after successful save
     try {
@@ -78,23 +62,8 @@ const saveTemplate = async() => {
     }
 
   } catch (error) {
-    console.error('Error updating template:', error)
-
-    // Handle different error scenarios
-    if (error.response?.status === 404) {
-      showError('Template not found. It may have been deleted.')
-    } else if (error.response?.status === 403) {
-      showError('You don\'t have permission to edit this template.')
-    } else if (error.response?.status === 400) {
-      const errorMessage = error.response?.data?.detail || 'Invalid template data.'
-      showError(`Validation error: ${errorMessage}`)
-    } else if (error.response?.status >= 500) {
-      showError('Server error occurred while saving. Please try again later.')
-    } else if (!navigator.onLine) {
-      showError('No internet connection. Your changes weren\'t saved. Please reconnect and try again.')
-    } else {
-      showError('Failed to save template. Please try again.')
-    }
+    const errorResult = handleTemplateError(error, 'save')
+    showError(errorResult.message)
   } finally {
     isLoading.value = false
   }

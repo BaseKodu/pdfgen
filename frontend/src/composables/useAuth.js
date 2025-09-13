@@ -1,50 +1,35 @@
-import { ref, reactive, computed } from 'vue'
-import { getAuthToken, setAuthToken } from '../services/auth'
-import Cookies from 'js-cookie'
-import axios from 'axios'
-
-const API_URL = '/api'
-
-// Cookie configuration for guest status
-const GUEST_COOKIE = 'is_guest_user'
-const COOKIE_OPTIONS = {
-  expires: 7,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict'
-}
+import { reactive, computed } from 'vue'
+import { fetchMe, getToken, setToken } from '../services/authService'
+import { getGuestFlag, setGuestFlag } from '../services/authCookies'
+import { defaultGuestUser } from '../services/guestUser'
 
 // Global auth state
-const authState = reactive({
+const state = reactive({
   user: null,
   isAuthenticated: false,
   isGuest: false,
   isLoading: false,
-  error: null
+  error: null,
+  initialized: false
 })
 
 // Initialize auth state from stored data
-const initializeAuth = async () => {
-  const token = getAuthToken()
-  const isGuest = Cookies.get(GUEST_COOKIE) === 'true'
+async function initializeAuth() {
+  const token = getToken()
+  state.isGuest = getGuestFlag()
 
-  if (token) {
-    authState.isAuthenticated = true
-    authState.isGuest = isGuest
+  if (!token) return
 
-    // Try to fetch user info
-    try {
-      await fetchUserInfo()
-    } catch (error) {
-      console.warn('Failed to fetch user info on init:', error)
-      // If user info fetch fails but we have a token, still consider authenticated
-      // but set default user data
-      if (authState.isGuest) {
-        authState.user = {
-          name: 'Guest User',
-          email: 'guest@pdfgen.com',
-          is_guest: true
-        }
-      }
+  state.isAuthenticated = true
+  try {
+    const { data } = await fetchMe()
+    state.user = data
+  } catch (error) {
+    console.warn('Failed to fetch user info on init:', error)
+    // If user info fetch fails but we have a token, still consider authenticated
+    // but set default user data for guest users
+    if (state.isGuest) {
+      state.user = defaultGuestUser()
     }
   }
 }
@@ -52,109 +37,96 @@ const initializeAuth = async () => {
 // Fetch current user information
 const fetchUserInfo = async () => {
   try {
-    authState.isLoading = true
-    authState.error = null
+    state.isLoading = true
+    state.error = null
 
-    const response = await axios.get(`${API_URL}/me`)
-    authState.user = response.data
-    authState.isAuthenticated = true
+    const { data } = await fetchMe()
+    state.user = data
+    state.isAuthenticated = true
 
-    return response.data
+    return data
   } catch (error) {
-    authState.error = error.response?.data?.detail || 'Failed to fetch user info'
+    state.error = error.response?.data?.detail || 'Failed to fetch user info'
     throw error
   } finally {
-    authState.isLoading = false
-  }
-}
-
-// Set guest status
-const setGuestStatus = (isGuest) => {
-  authState.isGuest = isGuest
-  if (isGuest) {
-    Cookies.set(GUEST_COOKIE, 'true', COOKIE_OPTIONS)
-  } else {
-    Cookies.remove(GUEST_COOKIE)
+    state.isLoading = false
   }
 }
 
 // Login handler (extends existing auth service)
-const handleLoginSuccess = async (userData, isGuest = false) => {
+async function handleLoginSuccess(userData, isGuest = false) {
   try {
-    authState.isAuthenticated = true
-    setGuestStatus(isGuest)
+    state.isAuthenticated = true
+    setGuestFlag(isGuest)
+    state.isGuest = isGuest
 
     // Fetch fresh user info from API
-    await fetchUserInfo()
-
-    // If it's a guest user and we couldn't fetch user info, set default
-    if (isGuest && !authState.user) {
-      authState.user = {
-        name: 'Guest User',
-        email: 'guest@pdfgen.com',
-        is_guest: true
+    try {
+      const { data } = await fetchMe()
+      state.user = data
+    } catch (error) {
+      console.warn('Failed to fetch user info after login:', error)
+      // Fallback for guest users
+      if (isGuest) {
+        state.user = defaultGuestUser()
       }
     }
   } catch (error) {
-    console.warn('Failed to fetch user info after login:', error)
+    console.warn('Login success handler error:', error)
     // Fallback for guest users
     if (isGuest) {
-      authState.user = {
-        name: 'Guest User',
-        email: 'guest@pdfgen.com',
-        is_guest: true
-      }
-      authState.isAuthenticated = true
+      state.user = defaultGuestUser()
+      state.isAuthenticated = true
     }
   }
 }
 
 // Logout handler
-const handleLogout = () => {
-  authState.user = null
-  authState.isAuthenticated = false
-  authState.isGuest = false
-  authState.error = null
+function handleLogout() {
+  state.user = null
+  state.isAuthenticated = false
+  state.isGuest = false
+  state.error = null
 
   // Clear auth token
-  setAuthToken(null)
+  setToken(null)
 
   // Clear guest status
-  Cookies.remove(GUEST_COOKIE)
+  setGuestFlag(false)
 }
 
 // Auth composable
 export function useAuth() {
+  // Initialize auth state if not already done
+  if (!state.initialized) {
+    state.initialized = true
+    initializeAuth()
+  }
+
   // Computed properties for easy access
-  const isLoggedIn = computed(() => authState.isAuthenticated)
-  const currentUser = computed(() => authState.user)
-  const isGuestUser = computed(() => authState.isGuest)
-  const isLoadingUser = computed(() => authState.isLoading)
-  const authError = computed(() => authState.error)
+  const isLoggedIn = computed(() => state.isAuthenticated)
+  const currentUser = computed(() => state.user)
+  const isGuestUser = computed(() => state.isGuest)
+  const isLoadingUser = computed(() => state.isLoading)
+  const authError = computed(() => state.error)
 
   // User display helpers
   const userDisplayName = computed(() => {
-    if (!authState.user) return 'User'
-    if (authState.isGuest) return 'Guest User'
-    return authState.user.name || authState.user.email || 'User'
+    if (!state.user) return 'User'
+    if (state.isGuest) return 'Guest User'
+    return state.user.name || state.user.email || 'User'
   })
 
   const userInitials = computed(() => {
-    if (authState.isGuest) return 'G'
-    const name = authState.user?.name || authState.user?.email || 'User'
+    if (state.isGuest) return 'G'
+    const name = state.user?.name || state.user?.email || 'User'
     return name.charAt(0).toUpperCase()
   })
 
   const userEmail = computed(() => {
-    if (authState.isGuest) return 'guest@pdfgen.com'
-    return authState.user?.email || ''
+    if (state.isGuest) return 'guest@pdfgen.com'
+    return state.user?.email || ''
   })
-
-  // Initialize auth state if not already done
-  if (!authState.hasBeenInitialized) {
-    authState.hasBeenInitialized = true
-    initializeAuth()
-  }
 
   return {
     // State
@@ -173,9 +145,9 @@ export function useAuth() {
     fetchUserInfo,
     handleLoginSuccess,
     handleLogout,
-    setGuestStatus,
+    setGuestStatus: setGuestFlag,
 
     // Raw state for advanced usage
-    authState
+    authState: state
   }
 }

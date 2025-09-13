@@ -20,7 +20,10 @@ const handleClose = (index) => {
 };
 
 const getPositionClass = () => {
-  return `toast-${props.position.replace('-', ' toast-')}`;
+  return props.position
+    .split('-')
+    .map(segment => `toast-${segment}`)
+    .join(' ');
 };
 
 const getAlertClass = (type) => {
@@ -45,9 +48,15 @@ const getAlertClass = (type) => {
       <button
         v-if="toast.closeable !== false"
         @click="handleClose(index)"
+        @keydown.enter="handleClose(index)"
+        @keydown.space.prevent="handleClose(index)"
         class="btn btn-sm btn-circle btn-ghost ml-2"
+        type="button"
+        :aria-label="`Close ${toast.type} notification`"
+        role="button"
+        tabindex="0"
       >
-        ✕
+        <span aria-hidden="true">✕</span>
       </button>
     </div>
   </div>
