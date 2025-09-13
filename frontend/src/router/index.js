@@ -4,6 +4,7 @@ import AuthView from '../views/AuthView.vue'
 import { getAuthToken } from '../services/auth'
 import TemplatesView from '../views/TemplatesView.vue'
 import TemplateView from '../views/TemplateView.vue'
+import MainLayout from '../components/layouts/MainLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,17 +19,25 @@ const router = createRouter({
       name: 'login',
       component: AuthView
     },
+    // Routes that use MainLayout
     {
-      path: '/templates',
-      name: 'templates',
-      component: TemplatesView,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/templates/:id',
-      name: 'template',
-      component: TemplateView,
-      meta: { requiresAuth: true }
+      path: '/app',
+      component: MainLayout,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '/templates',
+          name: 'templates',
+          component: TemplatesView,
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/templates/:id',
+          name: 'template',
+          component: TemplateView,
+          meta: { requiresAuth: true }
+        }
+      ]
     }
   ],
 })
