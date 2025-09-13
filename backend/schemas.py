@@ -72,6 +72,7 @@ class PDFRequest(BaseModel):
     template_id: Optional[str] = None
     content: Optional[str] = None
     is_jsx: Optional[bool] = None  # Default to false for backward compatibility
+    is_vue: Optional[bool] = None  # Default to false for backward compatibility
     data: Optional[dict] = None
 
 class GuestUserResponse(BaseModel):

@@ -39,3 +39,40 @@ class JSXConverter:
             raise Exception(f"JSX conversion failed: {e.stderr}")
         except FileNotFoundError:
             raise Exception("Node.js not found. Please install Node.js")
+
+
+class VueConverter:
+    def __init__(self, node_script_path="convertors/vue-converter.js"):
+        self.node_script_path = node_script_path
+        
+    def convert(self, vue_string:str, context:dict=None):
+        """
+        Convert Vue string to HTML using Node.js
+        
+        Args:
+            vue_string (str): Vue template string
+            context (dict): Variables to pass to the Vue template
+            
+        Returns:
+            str: Converted HTML string
+        """
+        if context is None:
+            context = {}
+            
+        try:
+            context_json = json.dumps(context)
+            
+            # Call Node.js script
+            result = subprocess.run([
+                'node', 
+                self.node_script_path, 
+                vue_string,
+                context_json
+            ], capture_output=True, text=True, check=True)
+            
+            return result.stdout.strip()
+            
+        except subprocess.CalledProcessError as e:
+            raise Exception(f"Vue conversion failed: {e.stderr}")
+        except FileNotFoundError:
+            raise Exception("Node.js not found. Please install Node.js")
