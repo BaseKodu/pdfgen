@@ -1,7 +1,7 @@
 from playwright.async_api import async_playwright
 from typing import Optional
 import asyncio
-from convertors.wrappers import JSXConverter
+from convertors.wrappers import JSXConverter, VueConverter
 
 class PlaywrightManager:
     _instance = None
@@ -28,11 +28,12 @@ class PlaywrightManager:
             )
             self._initialized = True
 
-    def _prepare_html_content(self, content: str, context: dict = None, is_jsx: bool = False) -> str:
+    def _prepare_html_content(self, content: str, context: dict = None, is_jsx: bool = False, is_vue: bool = False) -> str:
         # Convert JSX to HTML if needed
-        is_jsx = True
         if is_jsx:
             content = JSXConverter().convert(content, context)
+        elif is_vue:
+            content = VueConverter().convert(content, context)
 
         # Wrap content with proper HTML structure and Tailwind
         return f"""
@@ -52,13 +53,13 @@ class PlaywrightManager:
         </html>
         """
 
-    async def generate_pdf(self, content: str, context: dict = None, is_jsx: bool = False) -> bytes:
+    async def generate_pdf(self, content: str, context: dict = None, is_jsx: bool = False, is_vue: bool = False) -> bytes:
         if not self._initialized:
             await self.initialize()
             
         page = await self._browser.new_page()
         try:
-            html_content = self._prepare_html_content(content, context, is_jsx)
+            html_content = self._prepare_html_content(content, context, is_jsx, is_vue)
             await page.set_content(html_content)
             # Wait for Tailwind to initialize
             await page.wait_for_load_state("networkidle")
