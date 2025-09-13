@@ -2,12 +2,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '../../composables/useToast'
+import { useAuth } from '../../composables/useAuth'
 import AppButton from '../ui/AppButton.vue'
 import AppInput from '../ui/AppInput.vue'
 import { login } from '../../services/auth'
 
 const router = useRouter()
 const { showError, showSuccess } = useToast()
+const { handleLoginSuccess } = useAuth()
 
 const email = ref('')
 const password = ref('')
@@ -27,6 +29,10 @@ const handleLogin = async () => {
       username: email.value,
       password: password.value
     })
+
+    // Update global auth state
+    await handleLoginSuccess(response, false) // false = not a guest user
+
     console.log("Login successful")
     console.log(response)
     showSuccess('Login successful! Redirecting...')

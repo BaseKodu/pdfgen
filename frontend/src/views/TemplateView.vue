@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import AppNavbar from '../components/ui/AppNavbar.vue'
 import CodeEditor from '../components/templates/CodeEditor.vue'
 import AppButton from '../components/ui/AppButton.vue'
 import PDFPreview from '../components/templates/PDFPreview.vue'
@@ -60,27 +59,56 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
-    <AppNavbar />
-
-    <div class="flex flex-1">
-      <div class="w-1/2 p-1 flex flex-col">
-        <div class="flex flex-col">
-          <CodeEditor
-            v-model:content="code"
-            v-model:data="data"
-            :engine="'jsx'"
-          />
-          <AppButton @click="saveTemplate" :isLoading="isLoading" class="mt-2">
-            Save Template & Generate PDF
-          </AppButton>
+  <div class="flex flex-1 h-full">
+    <!-- Code Editor Panel -->
+    <div class="w-1/2 border-r border-base-300 flex flex-col">
+      <div class="bg-base-100 border-b border-base-300 p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">Template Editor</h3>
+            <p class="text-sm text-base-content/60">Edit your template code and data</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="badge badge-primary">JSX</div>
+            <AppButton @click="saveTemplate" :isLoading="isLoading" size="sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Save & Generate
+            </AppButton>
+          </div>
         </div>
       </div>
-      <div class="w-1/2 p-4 flex flex-col">
+
+      <div class="flex-1 p-4 overflow-hidden">
+        <CodeEditor
+          v-model:content="code"
+          v-model:data="data"
+          :engine="'jsx'"
+          class="h-full"
+        />
+      </div>
+    </div>
+
+    <!-- PDF Preview Panel -->
+    <div class="w-1/2 flex flex-col">
+      <div class="bg-base-100 border-b border-base-300 p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">PDF Preview</h3>
+            <p class="text-sm text-base-content/60">Live preview of your PDF output</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="badge badge-success">Live</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 p-4 overflow-hidden bg-base-200">
         <PDFPreview
           ref="pdfPreviewRef"
           :templateId="templateId"
-
+          class="h-full"
         />
       </div>
     </div>

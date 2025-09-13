@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { loginAsGuest } from '../services/auth';
 import { useToast } from '../composables/useToast';
+import { useAuth } from '../composables/useAuth';
 import AppCard from '../components/ui/AppCard.vue';
 import AppToast from '../components/ui/AppToast.vue';
 
@@ -32,6 +33,7 @@ const features = [
 const router = useRouter();
 const isGuestLoading = ref(false);
 const { showError } = useToast();
+const { handleLoginSuccess } = useAuth();
 
 const startOptions = [
   {
@@ -64,7 +66,11 @@ const startOptions = [
 const handleGuestLogin = async () => {
   try {
     isGuestLoading.value = true;
-    await loginAsGuest();
+    const guestLoginResponse = await loginAsGuest();
+
+    // Update global auth state with guest status
+    await handleLoginSuccess(guestLoginResponse, true); // true = is guest user
+
     router.push('/templates');
   } catch (error) {
     console.error('Guest login error:', error);

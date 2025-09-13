@@ -70,7 +70,12 @@ export const loginAsGuest = async () => {
       password: guestResponse.data.password
     })
 
-    return loginResponse
+    // Return both login response and guest info
+    return {
+      ...loginResponse,
+      isGuest: true,
+      guestUserData: guestResponse.data
+    }
   } catch (error) {
     console.error('Guest login error:', error)
     throw error
