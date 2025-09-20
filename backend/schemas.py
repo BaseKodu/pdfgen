@@ -1,10 +1,21 @@
 from pydantic import BaseModel, Json
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from fastapi_users import schemas
 from enum import Enum
 
 
+
+# OAuth Account Schema
+class OAuthAccountRead(BaseModel):
+    id: int
+    oauth_name: str
+    account_id: str
+    account_email: str
+    expires_at: Optional[int] = None
+    
+    class Config:
+        from_attributes = True
 
 # FastAPI Users schemas
 class UserRead(schemas.BaseUser[int]):
@@ -17,6 +28,7 @@ class UserRead(schemas.BaseUser[int]):
     last_name: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
+    oauth_accounts: Optional[List[OAuthAccountRead]] = None
 
 class UserCreate(schemas.BaseUserCreate):
     email: str

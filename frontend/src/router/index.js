@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'login',
       component: AuthView
     },
+    {
+      path: '/auth/callback',
+      name: 'auth-callback',
+      component: () => import('../views/AuthCallbackView.vue')
+    },
     // Routes that use MainLayout
     {
       path: '/app',

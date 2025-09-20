@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import routes
+from oauth import oauth_router
 from auth import auth_backend, fastapi_users
 from schemas import UserCreate, UserRead, UserUpdate
 from utils.playwright_manager import PlaywrightManager
@@ -84,6 +85,9 @@ app.include_router(
     prefix="/api/v1/users",
     tags=["users"],
 )
+
+# Include OAuth routes
+app.include_router(oauth_router, prefix="/api/v1/auth", tags=["oauth"])
 
 # Include application routes
 app.include_router(routes.router, prefix="/api/v1", tags=["templates"])

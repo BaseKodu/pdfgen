@@ -18,6 +18,7 @@
     "codemirror": "^6.0.1",
     "daisyui": "^5.0.37",
     "js-cookie": "^3.0.5",
+    "oh-vue-icons": "^1.0.0-rc3",
     "tailwindcss": "^4.1.7",
     "vue": "^3.5.13",
     "vue-codemirror": "^6.1.1",
