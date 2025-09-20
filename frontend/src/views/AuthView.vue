@@ -18,6 +18,7 @@ const onRegistrationSuccess = () => {
   activeTab.value = 'login';
 };
 
+
 const handleGoogleLogin = async () => {
   try {
     // Get OAuth providers to check if Google is available
