@@ -13,8 +13,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import models
 import schemas
-from database import get_db
-from auth import current_active_user, get_user_manager
+from core.database import get_db
+from core.auth import current_active_user, get_user_manager
 from .oauth_config import oauth_manager
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import AuthenticationBackend
@@ -189,7 +189,7 @@ async def oauth_callback(
         user_with_oauth = result.scalars().first()
         
         # Create JWT token for the user using the JWT strategy
-        from auth import get_jwt_strategy
+        from core.auth import get_jwt_strategy
         jwt_strategy = get_jwt_strategy()
         token = await jwt_strategy.write_token(user_with_oauth)
         

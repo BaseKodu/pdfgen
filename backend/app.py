@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import routes
-from oauth import oauth_router
-from auth import auth_backend, fastapi_users
+from core.auth import auth_backend, fastapi_users
+from core.config import ALLOWED_ORIGINS
 from schemas import UserCreate, UserRead, UserUpdate
-from utils.playwright_manager import PlaywrightManager
+from features.pdf_generation.services.playwright_manager import PlaywrightManager
+
+# Import API routes
+from api.v1 import templates, api_keys, external
+from features.oauth import oauth_router
 
 # Create FastAPI instance
 app = FastAPI(
@@ -26,7 +29,6 @@ async def shutdown_event():
     playwright_manager = await PlaywrightManager.get_instance()
     await playwright_manager.cleanup() 
 
-
 #@app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"Incoming request: {request.method} {request.url}")
@@ -40,20 +42,12 @@ async def log_requests(request: Request, call_next):
     logger.info(f"Response status: {response.status_code}")
     return response
 
-
-
-
-
-
-
 #--------------------------------end middleware------------------------------------------------------------------------
-
-
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this properly for production
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -89,8 +83,10 @@ app.include_router(
 # Include OAuth routes
 app.include_router(oauth_router, prefix="/api/v1/auth", tags=["oauth"])
 
-# Include application routes
-app.include_router(routes.router, prefix="/api/v1", tags=["templates"])
+# Include API routes
+app.include_router(templates.router, prefix="/api/v1", tags=["templates"])
+app.include_router(api_keys.router, prefix="/api/v1", tags=["api-keys"])
+app.include_router(external.router, prefix="/api/v1/external", tags=["external"])
 
 # Root endpoint
 @app.get("/")

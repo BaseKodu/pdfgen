@@ -41,6 +41,12 @@ const router = createRouter({
           name: 'template',
           component: TemplateView,
           meta: { requiresAuth: true }
+        },
+        {
+          path: '/api-keys',
+          name: 'api-keys',
+          component: () => import('../views/APIKeysView.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     }

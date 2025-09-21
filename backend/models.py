@@ -3,7 +3,7 @@ from enum import Enum
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyBaseOAuthAccountTable
-from database import Base
+from core.database import Base
 from nanoid import generate
 import enum
 
@@ -31,6 +31,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     # Relationships
     templates = relationship("Template", backref="users")
     oauth_accounts = relationship("OAuthAccount", back_populates="user")
+    api_keys = relationship("ApiKey", back_populates="user")
 
 
 class TemplatingEngineEnum(str, Enum):
@@ -52,6 +53,21 @@ class Template(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     user_id = Column(Integer, ForeignKey("users.id"))
 
+
+class ApiKey(Base):
+    __tablename__ = "api_keys"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    key = Column(String(64), unique=True, index=True, nullable=False)
+    name = Column(String, nullable=False)  # User-friendly name for the key
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=True)
+    last_used = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    expires_at = Column(DateTime(timezone=True), nullable=True)  # Optional expiration
+    
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="cascade"), nullable=False)
+    user = relationship("User", back_populates="api_keys")
 
 
 '''
