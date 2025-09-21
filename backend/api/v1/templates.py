@@ -233,21 +233,22 @@ async def create_guest_user(
     import string
     
     # Generate random guest credentials
-    guest_id = ''.join(secrets.choices(string.ascii_lowercase + string.digits, k=8))
+    guest_id = ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(8))
     guest_email = f"guest_{guest_id}@pdfgen.com"
     guest_password = secrets.token_urlsafe(12)
     
-    # Create guest user
-    guest_user = models.User(
+    # Create guest user using the user manager to properly hash the password
+    from schemas import UserCreate
+    
+    guest_user_create = UserCreate(
         email=guest_email,
-        hashed_password=guest_password,  # This will be hashed by the user manager
-        is_active=True,
-        is_verified=True,
-        is_superuser=False,
-        is_guest=True
+        password=guest_password
     )
     
-    db.add(guest_user)
+    guest_user = await user_manager.create(guest_user_create)
+    
+    # Update the guest user with additional fields
+    guest_user.is_guest = True
     await db.commit()
     await db.refresh(guest_user)
     

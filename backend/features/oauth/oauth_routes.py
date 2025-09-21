@@ -137,17 +137,21 @@ async def oauth_callback(
         
         if not user:
             # Create new user directly in database for OAuth users
-            # This bypasses the password requirement for OAuth-only users
-            user = models.User(
+            # Create OAuth user using the user manager to properly hash the password
+            import secrets
+            oauth_password = secrets.token_urlsafe(32)  # Generate a random password
+            
+            from schemas import UserCreate
+            oauth_user_create = UserCreate(
                 email=user_info.email,
-                hashed_password="",  # Empty password for OAuth users
-                is_active=True,
-                is_verified=True,  # Trust OAuth provider verification
-                is_superuser=False,
-                first_name=getattr(user_info, 'first_name', None),
-                last_name=getattr(user_info, 'last_name', None),
+                password=oauth_password
             )
-            db.add(user)
+            
+            user = await user_manager.create(oauth_user_create)
+            
+            # Update with additional OAuth-specific fields
+            user.first_name = getattr(user_info, 'first_name', None)
+            user.last_name = getattr(user_info, 'last_name', None)
             await db.commit()
             await db.refresh(user)
         
