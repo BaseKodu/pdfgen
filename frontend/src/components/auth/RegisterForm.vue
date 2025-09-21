@@ -48,21 +48,28 @@ const handleRegister = async () => {
       email: email.value,
       password: password.value,
     });
-    console.log('Created:', response.data)
     showSuccess('Registration successful! Please login with your new account.')
     emit('registration-success')
   } catch (err) {
-    console.error('Error:', err.response?.data || err.message)
     let errorMessage = 'Registration failed. Please try again.'
 
     if (err.response?.data?.detail) {
-      errorMessage = err.response.data.detail
+      const detail = err.response.data.detail
+      if (detail === 'REGISTER_USER_ALREADY_EXISTS') {
+        errorMessage = 'This email is already registered. Please use a different email or try logging in.'
+        emailError.value = 'Email already exists'
+        // Clear the email field to encourage using a different email
+        email.value = ''
+      } else {
+        errorMessage = detail
+      }
     } else if (err.response?.data?.message) {
       errorMessage = err.response.data.message
     } else if (err.response?.status === 400) {
       errorMessage = 'Invalid registration data. Please check your inputs.'
     } else if (err.response?.status === 409) {
       errorMessage = 'Email already exists. Please use a different email.'
+      emailError.value = 'Email already exists'
     }
 
     showError(errorMessage)

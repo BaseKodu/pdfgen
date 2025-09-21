@@ -17,7 +17,8 @@ const props = defineProps({
       'number',
       'tel',
       'url',
-      'search'
+      'search',
+      'datetime-local'
     ].includes(value)
   },
   label: {

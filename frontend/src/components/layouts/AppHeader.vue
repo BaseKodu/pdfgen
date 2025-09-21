@@ -11,6 +11,8 @@ const currentPageTitle = computed(() => {
     return 'Template Editor';
   } else if (route.path === '/templates') {
     return 'Templates';
+  } else if (route.path === '/api-keys') {
+    return 'API Keys';
   }
   return 'Dashboard';
 });
@@ -32,6 +34,24 @@ const handleLogout = () => {
           <h1 class="text-lg font-bold text-base-content">pdfGen</h1>
         </div>
       </RouterLink>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-4">
+        <RouterLink
+          to="/templates"
+          class="btn btn-ghost btn-sm"
+          :class="{ 'btn-active': route.path === '/templates' }"
+        >
+          📄 Templates
+        </RouterLink>
+        <RouterLink
+          to="/api-keys"
+          class="btn btn-ghost btn-sm"
+          :class="{ 'btn-active': route.path === '/api-keys' }"
+        >
+          🔑 API Keys
+        </RouterLink>
+      </nav>
     </div>
 
     <!-- Right side actions -->

@@ -68,7 +68,7 @@ const showModal = () => {
           v-for="template in templates"
           :key="template.id"
           :title="template.name"
-          :description="template.description"
+          :description="template.description || 'No description available'"
           :route="`/templates/${template.id}`"
           action-text="View Template"
           action-style="btn-primary"

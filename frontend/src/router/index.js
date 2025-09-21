@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'login',
       component: AuthView
     },
+    {
+      path: '/auth/callback',
+      name: 'auth-callback',
+      component: () => import('../views/AuthCallbackView.vue')
+    },
     // Routes that use MainLayout
     {
       path: '/app',
@@ -35,6 +40,12 @@ const router = createRouter({
           path: '/templates/:id',
           name: 'template',
           component: TemplateView,
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/api-keys',
+          name: 'api-keys',
+          component: () => import('../views/APIKeysView.vue'),
           meta: { requiresAuth: true }
         }
       ]

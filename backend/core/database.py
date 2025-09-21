@@ -1,9 +1,15 @@
+"""
+Database configuration and session management
+"""
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-import os
+from .config import DATABASE_URL
 
-# Database URL - note the aiosqlite:// prefix for async SQLite
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./app.db"
+# Convert SQLite URL to async format
+if DATABASE_URL.startswith("sqlite://"):
+    SQLALCHEMY_DATABASE_URL = DATABASE_URL.replace("sqlite://", "sqlite+aiosqlite://")
+else:
+    SQLALCHEMY_DATABASE_URL = DATABASE_URL
 
 # Create async engine
 engine = create_async_engine(

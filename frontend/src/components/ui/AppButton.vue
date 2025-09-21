@@ -1,10 +1,11 @@
 <script setup>
+import { BUTTON_VARIANTS, BUTTON_VARIANT_VALUES } from '../../composables/useComposables'
 
 const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'danger', 'success', 'outline', 'ghost'].includes(value)
+    validator: (value) => BUTTON_VARIANT_VALUES.includes(value)
   },
   type: {
     type: String,
