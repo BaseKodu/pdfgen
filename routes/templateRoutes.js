@@ -67,4 +67,37 @@ router.get('/edit/:id', ensureAuthenticated, async (req, res) => {
 });
 
 
+// Route to update template
+router.post('/templates/update/:id', ensureAuthenticated, async (req, res) => {
+    try {
+        const template = await Template.findByIdAndUpdate(
+            req.params.id,
+            { content: req.body.content },
+            { new: true }
+        );
+        res.json({ type: 'success', message: 'Template updated successfully' });
+    } catch (err) {
+        res.status(500).json({ type: 'danger', message: err.message });
+    }
+});
+
+// Route to generate preview
+router.post('/templates/preview', ensureAuthenticated, async (req, res) => {
+    try {
+        // Here you'll implement your PDF generation logic
+        // Store the preview temporarily
+        // You might want to use something like pdf-lib or puppeteer
+        res.json({ type: 'success' });
+    } catch (err) {
+        res.status(500).json({ type: 'danger', message: err.message });
+    }
+});
+
+// Route to serve preview PDF
+router.get('/templates/preview-pdf', ensureAuthenticated, (req, res) => {
+    // Serve the temporarily generated preview PDF
+    // Implementation depends on how you're generating/storing the preview
+});
+
+
 module.exports = router;

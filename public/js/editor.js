@@ -24,6 +24,11 @@ CodeMirror.defineMode("ejs", function(config, parserConfig) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    let autoSaveEnabled = false;
+    let autoSaveInterval;
+    const LOCAL_STORAGE_KEY = `template_${templateId}`;
+    const AUTO_SAVE_INTERVAL = 30000; // 30 seconds
+
     const editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
         mode: "ejs",
         theme: "monokai",
@@ -34,6 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
         indentUnit: 2,
         tabSize: 2,
         autofocus: true,
+        height: "100%",
+        viewportMargin: Infinity,
         extraKeys: {
             "Ctrl-S": function(cm) {
                 saveTemplate();
@@ -43,6 +50,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set editor size
     editor.setSize("100%", "100%");
+
+    // Load from local storage if available
+    const savedContent = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedContent) {
+        const shouldRestore = confirm("Found unsaved changes. Would you like to restore them?");
+        if (shouldRestore) {
+            editor.setValue(savedContent);
+        } else {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+        }
+    }
+
+    // Save to local storage
+    function saveToLocalStorage() {
+        const content = editor.getValue();
+        localStorage.setItem(LOCAL_STORAGE_KEY, content);
+    }
 
     // Function to save template
     async function saveTemplate() {
@@ -58,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
             if (data.type === 'success') {
+                // Clear local storage after successful save
+                localStorage.removeItem(LOCAL_STORAGE_KEY);
                 alert('Template saved successfully!');
                 updatePDFPreview();
             } else {
@@ -65,14 +91,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (err) {
             alert('Error saving template: ' + err.message);
+            // Save to local storage in case of error
+            saveToLocalStorage();
         }
     }
 
-    // Add debounced preview update
+    // Toggle auto-save functionality
+    const autoSaveToggle = document.getElementById('autoSaveToggle');
+    autoSaveToggle.addEventListener('click', function() {
+        autoSaveEnabled = !autoSaveEnabled;
+        this.textContent = `Auto-save: ${autoSaveEnabled ? 'On' : 'Off'}`;
+        
+        if (autoSaveEnabled) {
+            autoSaveInterval = setInterval(saveToLocalStorage, AUTO_SAVE_INTERVAL);
+        } else {
+            clearInterval(autoSaveInterval);
+        }
+    });
+
+    // Save button click handler
+    const saveButton = document.getElementById('saveButton');
+    saveButton.addEventListener('click', saveTemplate);
+
+    // Add debounced preview update and local storage save
     let previewTimeout;
     editor.on('change', function() {
         clearTimeout(previewTimeout);
-        previewTimeout = setTimeout(updatePDFPreview, 1000);
+        previewTimeout = setTimeout(() => {
+            updatePDFPreview();
+            saveToLocalStorage();
+        }, 1000);
     });
 
     async function updatePDFPreview() {
@@ -94,4 +142,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error updating preview:', err);
         }
     }
+
+    // Handle beforeunload event to warn about unsaved changes
+    window.addEventListener('beforeunload', function(e) {
+        if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
 });

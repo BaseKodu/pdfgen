@@ -3723,6 +3723,10 @@ html:has(.drawer-toggle:checked) {
   height: 100vh;
 }
 
+.h-\[calc\(100vh-4rem\)\] {
+  height: calc(100vh - 4rem);
+}
+
 .min-h-full {
   min-height: 100%;
 }
